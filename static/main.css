@@ -1,0 +1,110 @@
+/* general */
+
+@media (prefers-color-scheme: dark){
+    :root{
+        --font_color: #FFFFFF;
+        --font_sub_color: #DEDEDE;
+        --bg_color: #181818;
+        --bg_sub_color: #202020;
+        --bg_darker_color: #121212;
+    }
+}
+@media (prefers-color-scheme: light){
+    :root{
+        /* do light theme colors later */
+        --font_color: #FFFFFF;
+        --font_sub_color: #DEDEDE;
+        --bg_color: #181818;
+        --bg_sub_color: #202020;
+        --bg_darker_color: #121212;
+    }
+}
+
+:root{
+    --general_font: "Roboto", sans-serif;
+    --accent_color: #3137C9;
+    --other_color: #ED3024;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    font-family: var(--general_font);
+    color: var(--font_color);
+}
+a{
+    text-decoration: none;
+}
+
+/* main */
+
+body{
+    background-color: var(--bg_color);
+    height: 100%;
+    width: 100%;
+}
+
+/* header */
+
+header{
+    background-color: var(--bg_sub_color);
+    display: grid;
+    grid-template-columns: 70% 30%;
+}
+nav.smallnav{
+    display: none;
+}
+nav.bignav{
+    display: grid;
+    grid-template-columns: 70% 30%;
+    justify-content: space-between;
+}
+nav.bignav div:first-child{
+    display: flex;
+}
+nav.bignav *{
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+}
+nav.bignav a{
+    padding: 10px;
+}
+
+nav.bignav label{
+    padding: 10px;
+}
+nav.bignav #custom_pages{
+    display: none;
+}
+nav.bignav #custom_pages a{
+    text-transform: capitalize;
+}
+nav.bignav #dropdown:checked + label #custom_pages{
+    display: flex;
+    width: 165px;
+    flex-direction: column;
+    position: absolute;
+    padding: 0;
+    transform: translate(-10px, 10px);
+    background-color: var(--accent_color);
+}
+nav.bignav #dropdown:checked + label {
+    background-color: var(--accent_color);
+}
+
+
+/* modals */
+
+
+/* modals */
+
+
+/* other */
+
+
+/* media */
+
+@media screen and (max-width: 600px) {
+    
+}

@@ -1,3 +1,7 @@
 /.htaccess_example_for_rewrite
-/sec-project
 /unimportant
+/blog-project
+/static/user
+bd_architecture
+db.ini
+.htaccess
