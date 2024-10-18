@@ -1,4 +1,4 @@
-<section id="left-panel">
+<section id="left-panel" class="<?php if(!isset($_SESSION['left_user_id']) || $_SESSION['left_user_id'] == -1) echo 'hidden'; ?>">
     <div class="profile_left">
     <!-- Profile's media pictures -->
         <div class="profile_media">

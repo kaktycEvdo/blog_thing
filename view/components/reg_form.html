@@ -1,0 +1,27 @@
+<form class="form_page" method="POST">
+    <h2>Регистрация</h2>
+    <div>
+        <input required type="text" name="name" placeholder="Имя профиля">
+        <input required type="email" name="email" placeholder="Электронная почта">
+        <input required type="password" name="password" placeholder="Пароль">
+        <input type="submit" value="Зарегистрироваться">
+    </div>
+    <div>
+        <h2>Выбор изображения профиля</h2>
+        <input accept="image/*" type="file" limit="20000" id="profile_image">
+        <label for="profile_image">Выбрать изображение</label>
+        Превью: <img src="static/user-xxl.png" alt="profile picture">
+    </div>
+    <div>
+        <a href="auth">Авторизация</a>
+    </div>
+</form>
+<script>
+var loadFile = function(event) {
+    var output = document.getElementById("output");
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) // free memory
+    }
+  };
+</script>

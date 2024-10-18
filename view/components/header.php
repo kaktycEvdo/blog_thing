@@ -15,14 +15,15 @@
                     <a href="">Статья 2</a>
                     <a href="">Статья 3</a>
                 </div>
+                <div class="arrow_down"></div>
             </label>
             
-            <a href="#about">Обо мне</a>
+            <a href="about">Обо мне</a>
             <a href="advertisement">Реклама</a>
         </div>
         <div>
             <a href="profile">Профиль</a>
         </div>
     </nav>
-    <div class="search"></div>
+    <input type="text" id="header_searchbar" placeholder="Поиск по блогу">
 </header>
