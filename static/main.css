@@ -44,14 +44,14 @@ body{
     width: 100%;
 }
 main{
-    display: flex;
-
+    display: grid;
+    grid-template-columns: 300px calc(100vw - 300px);
+    justify-content: left;
 }
 .profile_page{
     display: grid;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 10% 90%;
     grid-auto-flow: column;
-    width: 100%;
     padding: 100px;
 }
 .profile_page > h1{
@@ -62,14 +62,9 @@ main{
     flex-direction: column;
     gap: 20px;
 }
-.profile_page > form{
-    display: flex;
-    flex-direction: column;
-    /* gap: 20px; */
-}
 .profile_page img{
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
 }
 .profile_page button{
@@ -79,6 +74,48 @@ main{
     padding: 12px;
     cursor: pointer;
 }
+.profile_page > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    grid-row: 1 / 3;
+}
+.profile_page > .image-select{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profile_page > .image-select img#output{
+    border-radius: 0;
+}
+.profile_page > .image-select > div{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.profile_page > .image-select > .pfp.hidden{
+    display: none;
+}
+.profile_page > .image-select > .bg.hidden{
+    display: none;
+}
+.main_users{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+    justify-content: left;
+    padding: 20px;
+}
+.main_users > div{
+    background-color: var(--bg_sub_color);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 20vh;
+}
 
 /* header */
 
@@ -87,6 +124,8 @@ header{
     display: grid;
     grid-template-columns: 70% 30%;
     box-shadow: 0 0 15px 1px rgba(0,0,0,0.5);
+    z-index: 5;
+    width: 100%;
 }
 nav.smallnav{
     display: none;
@@ -96,8 +135,11 @@ nav.bignav{
     grid-template-columns: 80% 20%;
     justify-content: space-between;
 }
-nav.bignav div:first-child{
+nav.bignav > div{
     display: flex;
+}
+nav.bignav > div:nth-child(2){
+    justify-content: center;
 }
 nav.bignav *{
     text-transform: uppercase;
@@ -105,10 +147,10 @@ nav.bignav *{
     user-select: none;
 }
 nav.bignav a{
-    padding: 20px;
+    padding: 15px 20px;
 }
 nav.bignav label{
-    padding: 20px;
+    padding: 15px 20px;
     display: flex;
     gap: 15px;
     align-items: center;
@@ -122,6 +164,7 @@ nav.bignav label{
 }
 nav.bignav #custom_pages{
     display: none;
+    z-index: 5;
 }
 nav.bignav #custom_pages a{
     text-transform: capitalize;
@@ -134,14 +177,13 @@ nav.bignav #dropdown:checked + label #custom_pages{
     position: absolute;
     padding: 0;
     align-self: self-start;
-    transform: translate(-20px, 38px);
+    transform: translate(-20px, 33px);
     background-color: var(--accent_color);
     border-radius: 0 0 5px 5px;
 }
 nav.bignav #dropdown:checked + label {
     background-color: var(--accent_color);
 }
-
 #header_searchbar{
     padding: 10px 10px 10px 15px;
     background-color: var(--bg_sub_color);
@@ -150,13 +192,61 @@ nav.bignav #dropdown:checked + label {
 /* left panel */
 
 #left-panel{
-    position: fixed;
+    position: relative;
     min-height: 100vh;
+    height: 100%;
     width: 300px;
     background-color: var(--bg_sub_color);
+    order: -1;
 }
 #left-panel.hidden{
     display: none;
+}
+#left-panel .profile_left{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+}
+#left-panel .brief p:first-child{
+    font-size: larger;
+}
+#left-panel .brief p:nth-child(2){
+    color: var(--font_sub_color);
+}
+#left-panel .brief .contacts{
+    padding: 5px;
+}
+#left-panel .profile_left_buttons{
+    display: flex;
+    gap: 10px;
+}
+#left-panel hr{
+    border: 0;
+    border-top: 1px solid var(--bg_darker_color);
+    width: 80%;
+}
+#left-panel .generic-button{
+    border-radius: 50px;
+    font-size: smaller;
+    padding: 12px 20px;
+}
+#left-panel .profile_media{
+    display: grid;
+    grid-template-rows: 180px 100px;
+    height: 230px;
+}
+#left-panel .profile_media .pfp img{
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    border: 2px solid var(--font_color);
+}
+#left-panel .profile_media .pfp{
+    position: relative;
+    bottom: 50%;
 }
 
 /* modals */
@@ -175,7 +265,7 @@ input:focus{
     border-bottom: 2px solid var(--accent_color);
     outline: none;
 }
-input[type='submit']{
+input[type='submit'], form button, .generic-button{
     background-color: var(--accent_color);
     border: 0;
     border-radius: 5px;
@@ -190,6 +280,13 @@ input[type='file'] + label{
     border-radius: 5px;
     padding: 12px;
     cursor: pointer;
+    width: fit-content;
+}
+input[type='file'] + label img{
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    filter: invert(1.0);
 }
 input::placeholder{
     color: var(--font_sub_color);
@@ -197,24 +294,62 @@ input::placeholder{
 .form_page > h2{
     margin-bottom: 30px;
 }
-.form_page{
-    display: flex;
-    flex-direction: column;
+.form_page > form{
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 85vh;
+    width: 30%;
+    margin-top: 100px;
     gap: 20px;
+}
+.form_page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
 }
 .form_page div{
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
+.form_page > div{
+    margin-top: 20px;
+    flex-direction: row;
+}
 .form_page img{
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
+}
+.form_page .image-select{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+.form_page .image-select h2, .form_page .image-select .form_buttons{
+    grid-column: 1 / 3;
+}
+.form_page .image-select .form_buttons{
+    display: grid;
+    grid-auto-columns: 0.5fr;
+    grid-auto-flow: column;
+    width: 100%;
+}
+.form_page .hidden{
+    display: none;
+}
+.other-button{
+    background-color: var(--other_color);
+}
+img#output{
+    border-radius: 100%;
+}
+.invalid_field, .invalid_field:focus{
+    border-bottom-color: var(--other_color);
 }
 
 /* media */

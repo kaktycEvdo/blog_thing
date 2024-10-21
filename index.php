@@ -8,48 +8,55 @@
     <link rel="stylesheet" href="static/main.css">
 </head>
 <body>
-    <?php include_once 'view/components/header.php';
+    <?php
     echo '<main>';
+    echo '<section>';
+    include_once 'view/components/header.php';
     session_start();
     if(isset($_SESSION['response'])){
         $res = $_SESSION['response'];
         echo '<div class="modal '.($res[0] ? "merror" : "msuccess").'">'.$res[1].'</div>';
         $_SESSION['response'] = null;
     }
+
+    require 'connect_to_db.php';
+    require 'profile_info.php';
+
     switch (explode('?', $_SERVER['REQUEST_URI'])[0]){
         case '/':
         case '/index':
         case '/main':
-            if(isset($_SESSION['left_user_id']) || isset($_GET['left_user_id'])){
-                require 'profile_info.php';
-                include_once 'view/components/leftpanel.php';
-            }
             include_once 'view/main.php';
             break;
         case '/profile':
-            $_SESSION['left_user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : -1;
-            require 'profile_info.php';
-            include_once 'view/components/leftpanel.php';
-            include_once 'view/profile.php';
+            if(isset($_SESSION['user_id'])){
+                include_once 'view/profile.php';
+                $_SESSION['left_user_id'] = $_SESSION['user_id'];
+            } else {
+                header('Location: auth');
+            }
             break;
         case '/about':
             if(isset($_SESSION['user_id'])){
-                $_SESSION['left_user_id'] = $_SESSION['user_id'];
-                require 'profile_info.php';
-                include_once 'view/components/leftpanel.php';
                 include_once 'view/blogpage.php';
-            }
-            else{
-                header('Location: reg');
+                $_SESSION['left_user_id'] = $_SESSION['user_id'];
+            } else {
+                header('Location: auth');
             }
             break;
         case '/reg':
             include_once 'view/reg.php';
             break;
+        case '/auth':
+            include_once 'view/auth.php';
+            break;
         default:
             include_once 'view/404.html';
             break;
     }
+    if(!isset($_SESSION['left_user_id'])) $_SESSION['left_user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : -1;
+    echo '</section>';
+    include_once 'view/components/leftpanel.php';
     echo '</main>';
     ?>
 </body>

@@ -1,17 +1,22 @@
-<section id="left-panel" class="<?php if(!isset($_SESSION['left_user_id']) || $_SESSION['left_user_id'] == -1) echo 'hidden'; ?>">
+<?php
+    $hidden = 0;
+    if(!isset($_SESSION['left_user_id']) || $_SESSION['left_user_id'] == -1) $hidden = 1;
+    else $luser_data = $mysql->query('SELECT name, bg, pfp FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
+?>
+<section id="left-panel" class="<?php if($hidden) echo 'hidden'; ?>">
     <div class="profile_left">
     <!-- Profile's media pictures -->
         <div class="profile_media">
             <div class="background">
-                <img src="" alt="<?php echo "Profile's bg" ?>">
+                <img src="static/<?php echo $luser_data['bg'] ?>" alt="Profile's bg">
             </div>
             <div class="pfp">
-                <img src="" alt="<?php echo "Profile's name" ?>">
+                <img src="static/<?php echo $luser_data['pfp'] ?>" alt="PFP">
             </div>
         </div>
         <div class="brief">
             <!-- Profile's name and description -->
-            <p>Андрей</p>
+            <p><?php echo $luser_data['name'] ?></p>
             <p>Краткое описание</p>
             <div class="contacts">
                 <a href="custom link"><img src="" alt="Twitter link"></a>
@@ -25,8 +30,8 @@
         </div>
         <hr>
         <div class="profile_left_buttons">
-            <a href="profilelink/works" class="works">Мои работы</a>
-            <a href="profilelink/message" class="message">Написать мне</a>
+            <a href="<?php echo $luser_data['name'] ?>/works" class="generic-button other-button">Мои работы</a>
+            <a href="<?php echo $luser_data['name'] ?>/message" class="generic-button">Написать мне</a>
         </div>
     </div>
 </section>
