@@ -3,9 +3,27 @@ if(!isset($_POST['name'])){
     include_once 'components/reg_form.html';
 }
 else{
+    require_once 'checking_module.php';
     // check the data
     if(!isset($_POST['name']) || !isset($_POST['password']) || !isset($_POST['email'])){
-        echo 'fields were empty';
+        $_SESSION['response'] = [1, 'Ошибка: Пустые поля'];
+        header('Location: reg');
+        die;
+    }
+
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+
+    $res = validateName($name);
+    if($res[0] == 1){
+        $_SESSION['response'] = $res;
+        header('Location: reg');
+        die;
+    }
+    $res = validateEmail($email);
+    if($res[0] == 1){
+        $_SESSION['response'] = $res;
+        header('Location: reg');
         die;
     }
 

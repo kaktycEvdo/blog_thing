@@ -3,8 +3,8 @@
         <div id="fr1">
             <h2>Регистрация</h2>
             <div>
-                <input required type="text" name="name" placeholder="Имя профиля">
-                <input required type="email" name="email" placeholder="Электронная почта">
+                <input required type="text" name="name" pattern="[^!@#$%^&*\[\]\{\}]+" placeholder="Имя профиля">
+                <input required type="email" name="email" pattern="[a-z0-9._-]+@[a-z]{3,}\.[a-z]{2,3}" placeholder="Электронная почта">
                 <input required type="password" name="password" placeholder="Пароль">
                 <button id="ns1">
                     Далее

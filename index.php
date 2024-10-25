@@ -9,6 +9,7 @@
 </head>
 <body>
     <?php
+    
     echo '<main>';
     echo '<section>';
     include_once 'view/components/header.php';
@@ -29,7 +30,7 @@
             include_once 'view/main.php';
             break;
         case '/profile':
-            if(isset($_SESSION['user_id'])){
+            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != ''){
                 include_once 'view/profile.php';
                 $_SESSION['left_user_id'] = $_SESSION['user_id'];
             } else {
@@ -37,7 +38,7 @@
             }
             break;
         case '/about':
-            if(isset($_SESSION['user_id'])){
+            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != ''){
                 include_once 'view/blogpage.php';
                 $_SESSION['left_user_id'] = $_SESSION['user_id'];
             } else {
@@ -54,7 +55,6 @@
             include_once 'view/404.html';
             break;
     }
-    if(!isset($_SESSION['left_user_id'])) $_SESSION['left_user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : -1;
     echo '</section>';
     include_once 'view/components/leftpanel.php';
     echo '</main>';
