@@ -9,7 +9,6 @@
 </head>
 <body>
     <?php
-    
     echo '<main>';
     echo '<section>';
     include_once 'view/components/header.php';
@@ -23,7 +22,9 @@
     require 'connect_to_db.php';
     require 'profile_info.php';
 
-    switch (explode('?', $_SERVER['REQUEST_URI'])[0]){
+    $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+
+    switch ($uri){
         case '/':
         case '/index':
         case '/main':
@@ -51,6 +52,8 @@
         case '/auth':
             include_once 'view/auth.php';
             break;
+        case '/create_post':
+            include_once 'create_post.php';
         default:
             include_once 'view/404.html';
             break;

@@ -38,5 +38,9 @@ else{
         $_SESSION['user_id'] = $idwe;
         $_SESSION['left_user_id'] = $idwe;
     }
+    else{
+        $_SESSION['response'] = [1, 'Ошибка авторизации: неверные данные'];
+    }
+
     header('Location: profile');
 }
