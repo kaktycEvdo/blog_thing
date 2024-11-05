@@ -1,9 +1,24 @@
 <?php
-    if(isset($_POST['content'])){
+    if(isset($_POST['type'])){
         include_once 'create_post.php';
     }
     else{
-        $getPostsQ = $mysql->query('SELECT * FROM blogs WHERE author = '.$_SESSION['user_id'], PDO::FETCH_DEFAULT);
+        $authorDataQ = $mysql->prepare('SELECT name FROM users WHERE id = :id');
+        $id = 0;
+        if(isset($_GET['user'])){
+            $id = $_GET['user'];
+            $_SESSION['left_user_id'] = $_GET['user'];
+        }
+        else if (isset($_SESSION['left_user_id'])){
+            $id = $_SESSION['left_user_id'];
+        }
+        else{
+            header('Location: ../');
+        }
+        $authorDataQ->bindParam('id', $id);
+        $authorDataQ->execute();
+        $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
+        $getPostsQ = $mysql->query('SELECT id,  FROM blogs, videos WHERE author = '.$_SESSION['user_id'].' ORDER BY last_change_date', PDO::FETCH_ASSOC);
         
     function echoStory($name, $date, $src){
         echo '<div>
@@ -12,15 +27,15 @@
             <div>'.$date.'</div>
         </div>';
     }
-    function echoPost($post){
+    function echoPost($post, $author_data){
         switch($post['type']){
             case 1:{
                 echo '<div class="text_post '.(isset($post['cover']) ? 'with_cover' : null).'">
-                    '.(isset($post['cover']) ? "<img src=".$post['cover']." alt='bg' class='cover'>" : null).'
+                    '.(isset($post['cover']) ? "<img src=static/user/".$author_data['name']."/covers/".$post['cover']." alt='bg' class='cover'>" : null).'
                     <div class="content">'.$post['content'].'</div>
                     <div class="extras">
                         <div>
-                            <div class="date">'.$post['date'].'</div>
+                            <div class="date">'.$post['last_change_date'].'</div>
                             '.(isset($post['tags']) ? "<div class='tags'>".$post['tags']."</div>" : null).'
                         </div>
                     </div>
@@ -56,7 +71,7 @@
                 ["name" => "пупупу", "src" => "static/user/admin/1099581_Architecture_Building_1080x1920.mp4", "date" => "20.06.2020"]
             ];
             
-            $posts = $getPostsQ->fetch();
+            $posts = $getPostsQ->fetchAll();
 
             // $posts = [
             //     ["type" => 1, "content" => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020"],
@@ -117,6 +132,33 @@
             <?php include_once 'view/modal/new_post.php'; ?>
         </div>
     </div>
+    <div id="post_content" class="modal">
+        <div class="modal_content">
+            <div class="interface">
+                <div></div>
+                <button class="new_post_close">x</button>
+            </div>
+            <?php include_once 'view/modal/post_content.php'; ?>
+        </div>
+    </div>
+    <div id="edit_post" class="modal">
+        <div class="modal_content">
+            <div class="interface">
+                <div></div>
+                <button class="new_post_close">x</button>
+            </div>
+            <?php include_once 'view/modal/edit_post.php'; ?>
+        </div>
+    </div>
+    <div id="story" class="modal">
+        <div class="modal_content">
+            <div class="interface">
+                <div></div>
+                <button class="new_post_close">x</button>
+            </div>
+            <?php include_once 'view/modal/story.php'; ?>
+        </div>
+    </div>
     <section id="do_limit">
         <div>
             <h2>Задать лимит постов:</h2>
@@ -135,7 +177,7 @@
             <?php
                 for($i = ($id-1)*$limit; $i < $id*$limit; $i++){
                     if(!isset($posts[$i])) break;
-                    echoPost($posts[$i]);
+                    echoPost($posts[$i], $author_data);
                 }
             ?>
         </div>

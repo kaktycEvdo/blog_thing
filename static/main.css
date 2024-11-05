@@ -526,9 +526,22 @@ nav.bignav #dropdown:checked + label {
     cursor: pointer;
     border-radius: 10px;
 }
-.modal.shown form video{
+.modal.shown form video:not([src='']){
     width: 500px;
     height: 200px;
+}
+.modal.shown form video[src='']{
+    display: none;
+}
+.modal.shown form label[for='video']{
+    width: 500px;
+    height: 200px;
+    background-color: var(--bg_darker_color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 10px;
 }
 
 /* other */

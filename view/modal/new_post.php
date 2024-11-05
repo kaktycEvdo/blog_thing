@@ -20,8 +20,8 @@
     <div class="video_type hidden">
         <label for="video">
             Вставить видео
-            <video id="pre_video"></video>
-            <input id="video" name="video" type="file" accept="video/*">
+            <video id="pre_video" src=""></video>
+            <input id="video" name="video"  type="file" accept="video/*">
         </label>
         <label for="header">
             Заголовок поста
@@ -59,9 +59,13 @@
     });
     document.querySelector('#video').addEventListener('change', (e) => {
         let output = document.getElementById("pre_video");
+        let input = document.querySelector('#video');
         output.src = URL.createObjectURL(e.target.files[0]);
         output.onload = function() {
             URL.revokeObjectURL(output.src); // free memory
         }
+        document.querySelector('label[for="video"]').innerHTML = null;
+        document.querySelector('label[for="video"]').appendChild(output);
+        document.querySelector('label[for="video"]').appendChild(input);
     });
 </script>
