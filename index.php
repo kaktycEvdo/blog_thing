@@ -62,5 +62,6 @@
     include_once 'view/components/leftpanel.php';
     echo '</main>';
     ?>
+    <script src="static/main.js"></script>
 </body>
 </html>
