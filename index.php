@@ -21,8 +21,9 @@
 
     require 'connect_to_db.php';
     require 'profile_info.php';
-
-    $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+    
+    $url = isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : explode('?', $_SERVER['REQUEST_URI'])[0];
+    $url = str_replace('/sec-project/', '',  $url);
 
     switch ($uri){
         case '/':

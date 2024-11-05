@@ -58,6 +58,10 @@ else{
             $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
         }
 
+        if(!is_dir('static/user/'.$user_data['name'])){
+            mkdir('static/user/'.$user_data['name']);
+        }
+
         $res = validateImage($img, $to);
 
         if($res[0] == 1){
@@ -84,6 +88,10 @@ else{
             $to = 'static/bg-default.png';
         } else {
             $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
+        }
+
+        if(!is_dir('static/user/'.$user_data['name'])){
+            mkdir('static/user/'.$user_data['name']);
         }
 
         $res = validateImage($img, $to);

@@ -34,6 +34,10 @@ else{
     } else {
         $to = 'static/user/'.$_POST['name'].'/'.$_FILES['pfp']['name'];
     }
+
+    if(!is_dir('static/user/'.$user_data['name'])){
+        mkdir('static/user/'.$user_data['name']);
+    }
     
     if ($_FILES['pfp']['error'] > 0) {
         echo 'Проблема: ';
