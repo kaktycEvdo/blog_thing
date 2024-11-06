@@ -25,7 +25,7 @@
     $url = isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : explode('?', $_SERVER['REQUEST_URI'])[0];
     $url = str_replace('/sec-project/', '',  $url);
 
-    switch ($uri){
+    switch ($url){
         case '/':
         case '/index':
         case '/main':
