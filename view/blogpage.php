@@ -13,12 +13,13 @@
             $id = $_SESSION['left_user_id'];
         }
         else{
-            header('Location: ../');
+            header('Location: '.$dir);
         }
         $authorDataQ->bindParam('id', $id);
         $authorDataQ->execute();
         $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
-        $getPostsQ = $mysql->query('SELECT id,  FROM blogs, videos WHERE author = '.$_SESSION['user_id'].' ORDER BY last_change_date', PDO::FETCH_ASSOC);
+        $getPostsQ = $mysql->query('SELECT * FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY last_change_date', PDO::FETCH_ASSOC);
+        $getStoriesQ = $mysql->query('SELECT * FROM stories WHERE author = '.$_SESSION['user_id'].' ORDER BY publish_date', PDO::FETCH_ASSOC);
         
     function echoStory($name, $date, $src){
         echo '<div>
@@ -30,30 +31,31 @@
     function echoPost($post, $author_data){
         switch($post['type']){
             case 1:{
-                echo '<div class="text_post '.(isset($post['cover']) ? 'with_cover' : null).'">
-                    '.(isset($post['cover']) ? "<img src=static/user/".$author_data['name']."/covers/".$post['cover']." alt='bg' class='cover'>" : null).'
+                echo '<div class="text_post '.(isset($post['media']) ? 'with_cover' : null).'">
+                    '.(isset($post['media']) ? "<img src=static/user/".$author_data['name']."/covers/".$post['media']." alt='bg' class='cover'>" : null).'
                     <div class="content">'.$post['content'].'</div>
                     <div class="extras">
                         <div>
                             <div class="date">'.$post['last_change_date'].'</div>
                             '.(isset($post['tags']) ? "<div class='tags'>".$post['tags']."</div>" : null).'
                         </div>
+                        '.($post['comment_ability'] ? '<a href="#" class="readmore">оставить комментарий</a>' : '').'
                     </div>
                 </div>';
                 break;
             }
             case 2:{
                 echo '<div class="video_post">
-                    <video src="'.$post['video'].'" loop alt="video"></video>
+                    <video controls src="static/user/'.$author_data['name'].'/videos/'.$post['media'].'" loop alt="video"></video>
                     <div class="content">
                         '.$post['content'].'
                     </div>
                     <div class="extras">
                         <div>
-                            <div class="date">'.$post['date'].'</div>
+                            <div class="date">'.$post['last_change_date'].'</div>
                             '.(isset($post['tags']) ? "<div class='tags'>".$post['tags']."</div>" : null).'
                         </div>
-                        <a href="#" class="readmore">оставить комментарий</a>
+                        '.($post['comment_ability'] ? '<a href="#" class="readmore">оставить комментарий</a>' : '').'
                     </div>
                 </div>';
                 break;
@@ -62,49 +64,35 @@
     }
 ?>
 <div id="blogpage">
-    <section id="stories">
-        <?php
-            $stories = [
-                ["name" => "пупупу", "src" => "static/user/admin/1099581_Architecture_Building_1080x1920.mp4", "date" => "20.06.2020"],
-                ["name" => "хехехе", "src" => "static/user/admin/6916114_Motion Graphics_Motion Graphic_1080x1920.mp4", "date" => "20.06.2020"],
-                ["name" => "пупупу", "src" => "static/user/admin/1099581_Architecture_Building_1080x1920.mp4", "date" => "20.06.2020"],
-                ["name" => "пупупу", "src" => "static/user/admin/1099581_Architecture_Building_1080x1920.mp4", "date" => "20.06.2020"]
-            ];
-            
-            $posts = $getPostsQ->fetchAll();
+    <?php
+        $stories = $getStoriesQ->fetchAll();
+        $posts = $getPostsQ->fetchAll();
 
-            // $posts = [
-            //     ["type" => 1, "content" => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020"],
-            //     ["type" => 1, "content" => '<h3>Как писать код быстро и безболезненно?</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020", "cover" => 'static/user/admin/A_laptop.jpg', "tags" => 'создание сайтов'],
-            //     ["type" => 2, "content" => '<h2>Купил новый ноутбук?</h2>', "date" => '21.06.2020', "video" => 'static/user/admin/6916114_Motion Graphics_Motion Graphic_1080x1920.mp4', "tags" => 'продвижение видео'],
-            //     ["type" => 1, "content" => '<h3>Сходил на конференцию?</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020", "cover" => 'static/user/admin/A_laptop.jpg', "tags" => 'создание сайтов'],
-            //     ["type" => 1, "content" => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020"],
-            //     ["type" => 1, "content" => '<h3>Статья на второй странице?</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020", "cover" => 'static/user/admin/A_laptop.jpg', "tags" => 'создание сайтов'],
-            //     ["type" => 2, "content" => '<h2>Купил новый ноутбук?</h2>', "date" => '21.06.2020', "video" => 'static/user/admin/6916114_Motion Graphics_Motion Graphic_1080x1920.mp4', "tags" => 'продвижение видео'],
-            //     ["type" => 1, "content" => '<h3>Сходил на конференцию?</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati quisquam ratione ex aperiam eum cupiditate in tempore delectus placeat eaque, dolorum voluptatum at officia impedit, nobis sequi debitis, dolores nostrum reiciendis quo rerum ab laborum veritatis. Quam tempore tenetur amet, culpa quo quisquam voluptatum necessitatibus dolore ipsum possimus beatae eaque.', "date" => "21.06.2020", "cover" => 'static/user/admin/A_laptop.jpg', "tags" => 'создание сайтов']
-            // ];
+        if($stories){
+            echo '<section id="stories">';
             foreach ($stories as $_ => $story) {
-                echoStory($story['name'], $story['date'], $story['src']);
+                echoStory($story['name'], $story['publish_date'], $story['media']);
             }
-            // $id == 1 => $posts[0:$limit]; $id == 2 => $posts[$limit:$limit*2]
-            $id = 1;
-            $limit = 4;
-            if(isset($_GET['pageid'])){
-                $id = $_GET['pageid'];
+            echo '</section>';
+        }
+        // $id == 1 => $posts[0:$limit]; $id == 2 => $posts[$limit:$limit*2]
+        $id = 1;
+        $limit = 4;
+        if(isset($_GET['pageid'])){
+            $id = $_GET['pageid'];
+        }
+        if(isset($_GET['limit'])){
+            if($_GET['limit']=='all'){
+                $limit = sizeof($posts);
             }
-            if(isset($_GET['limit'])){
-                if($_GET['limit']=='all'){
-                    $limit = sizeof($posts);
-                }
-                else{
-                    $limit = $_GET['limit'];
-                }
+            else{
+                $limit = $_GET['limit'];
             }
-        ?>
-    </section>
+        }
+    ?>
     
     <?php
-    if($uri == '/about'){
+    if($url == '/about'){
     ?>
     <section id="input_new">
         <input placeholder="Напишите что-нибудь" type="text">

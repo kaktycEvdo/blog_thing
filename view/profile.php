@@ -9,7 +9,7 @@ else{
     $qChangeEmail = $mysql->prepare('UPDATE users SET email = :email WHERE id = '.$_SESSION['user_id']);
     $qChangePassword = $mysql->prepare('UPDATE users SET password = :password WHERE id = '.$_SESSION['user_id']);
     $qChangePFP = $mysql->prepare('UPDATE users SET pfp = :pfp WHERE id = '.$_SESSION['user_id']);
-    $qChangeBG = $mysql->prepare('UPDATE users SET bg = :bg WHERE id = '.$_SESSION['user_id']);
+    $qChangeBG = $mysql->prepare('UPDATE users SET background = :bg WHERE id = '.$_SESSION['user_id']);
 
     if(isset($_POST['newPassword']) && isset($_POST['repeatPassword'])){
         if($_POST['newPassword'] != $_POST['repeatPassword']){

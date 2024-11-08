@@ -1,7 +1,7 @@
 <?php
     $hidden = 0;
     if(isset($_SESSION['left_user_id']) && $_SESSION['left_user_id'] != ''){
-        $luser_data = $mysql->query('SELECT name, bg, pfp FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
+        $luser_data = $mysql->query('SELECT name, background, pfp FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
 
         echo '
         <section id="left-panel">
@@ -9,7 +9,7 @@
             <!-- Profile\'s media pictures -->
                 <div class="profile_media">
                     <div class="background">
-                        <img src="static/'.$luser_data['bg'].'" alt="Profile\'s bg">
+                        '.($luser_data['background'] != '' ? '<img src="static/'.$luser_data['background'].'" alt="profile background"/>' : '').'
                     </div>
                     <div class="pfp">
                         <img src="static/'.$luser_data['pfp'].'" alt="PFP">

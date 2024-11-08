@@ -142,11 +142,11 @@ main > section:first-child{
 
 #blogpage{
     display: grid;
-    grid-template-rows: 30vh auto auto;
     padding: 50px 50px;
     gap: 50px;
 }
 #blogpage > #stories{
+    height: 30vh;
     width: 100%;
     display: grid;
     grid-template-columns: 140px 140px 140px 140px;
@@ -246,6 +246,10 @@ main > section:first-child{
 #blogs .video_post video{
     height: 280px;
     object-fit: cover;
+}
+#blogs .video_post .content{
+    font-weight: bolder;
+    font-size: larger;
 }
 
 .pagination{
@@ -427,10 +431,13 @@ nav.bignav #dropdown:checked + label {
     bottom: 50%;
 }
 #left-panel .profile_media .background img{
-    height: 180px;
-    width: 300px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 #left-panel .profile_media .background{
+    height: 180px;
+    width: 300px;
     position: relative;
 }
 
@@ -488,6 +495,12 @@ nav.bignav #dropdown:checked + label {
     border-radius: 5px;
     padding: 2px;
 }
+.modal.shown .modal_content .interface button{
+    background-color: var(--other_color);
+}
+.modal.shown .modal_content select:hover, .modal.shown .modal_content .interface button:hover{
+    filter: brightness(1.5);
+}
 .modal.shown .modal_content .interface{
     display: grid;
     grid-template-columns: 95% 5%;
@@ -516,7 +529,7 @@ nav.bignav #dropdown:checked + label {
 .modal.shown form img, .modal.shown form video{
     object-fit: cover;
 }
-.modal.shown form img{
+.modal.shown form label[for='cover'] img{
     width: 500px;
     height: 200px;
     background-color: var(--bg_darker_color);
@@ -525,6 +538,9 @@ nav.bignav #dropdown:checked + label {
     align-items: center;
     cursor: pointer;
     border-radius: 10px;
+}
+.modal.shown form img:hover{
+    filter: brightness(0.8);
 }
 .modal.shown form video:not([src='']){
     width: 500px;
@@ -533,15 +549,34 @@ nav.bignav #dropdown:checked + label {
 .modal.shown form video[src='']{
     display: none;
 }
-.modal.shown form label[for='video']{
-    width: 500px;
-    height: 200px;
+.modal.shown form label[for='video'], .modal.shown form label[for='story']{
     background-color: var(--bg_darker_color);
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     border-radius: 10px;
+}
+.modal.shown form label[for='story']{
+    width: calc(140px * 2);
+    height: calc(30vh * 2);
+}
+.modal.shown form label[for='video']{
+    width: 500px;
+    height: 200px;
+}
+.modal.shown form label[for='video']:hover, .modal.shown form label[for='story']:hover{
+    filter: brightness(0.8);
+}
+.modal.shown form label[for='story'] img{
+    max-width: calc(140px * 2);
+    max-height: calc(30vh * 2);
+    object-fit: cover;
+}
+.modal.shown form label[for='story'] video{
+    width: calc(140px * 2);
+    height: calc(30vh * 2);
+    object-fit: cover;
 }
 
 /* other */
@@ -631,7 +666,7 @@ input::placeholder{
     grid-auto-flow: column;
     width: 100%;
 }
-.form_page .hidden, .modal.shown .text_type.hidden, .modal.shown .video_type.hidden{
+.form_page .hidden, .modal.shown .text_type.hidden, .modal.shown .video_type.hidden, .modal.shown .story_type.hidden{
     display: none;
 }
 .other-button{
@@ -643,6 +678,12 @@ img#output{
 .invalid_field, .invalid_field:focus{
     border-bottom-color: var(--other_color);
 }
+/* do interface later i guess */
+/* .vinterface_short{
+    display: flex;
+    width: 100%;
+    height: 100%;
+} */
 
 /* media */
 

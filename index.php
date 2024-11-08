@@ -9,6 +9,7 @@
 </head>
 <body>
     <?php
+    $dir = '/blog-project';
     echo '<main>';
     echo '<section>';
     include_once 'view/components/header.php';
@@ -22,8 +23,8 @@
     require 'connect_to_db.php';
     require 'profile_info.php';
     
-    $url = isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : explode('?', $_SERVER['REQUEST_URI'])[0];
-    $url = str_replace('/sec-project/', '',  $url);
+    $url = explode('?', $_SERVER['REQUEST_URI'])[0];
+    $url = str_replace($dir, '',  $url);
 
     switch ($url){
         case '/':
@@ -64,5 +65,5 @@
     echo '</main>';
     ?>
     <script src="static/main.js"></script>
-</body>
+    </body>
 </html>

@@ -6,7 +6,7 @@
         <!-- use space-between
         (left and right links) -->
         <div>
-            <a href="/">Главная</a>
+            <a href="<?php echo $dir; ?>">Главная</a>
             <input id="dropdown" type="checkbox" hidden>
             <label for="dropdown">
                 Статьи

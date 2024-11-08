@@ -31,9 +31,9 @@
                 </div>
             </div>
             <div class="bg">
-                <img id="bg-output" src="static/<?php echo $user_data['bg'] ?>" alt="Profile background">
+                <img id="bg-output" src="static/<?php echo $user_data['background'] ?>" alt="No background">
                 <div>
-                    <input value="<?php echo $user_data['bg'] ? $user_data['bg'] : 'default' ?>" accept="image/*" type="file" limit="20000" name="profile_bg" id="profile_bg">
+                    <input value="<?php echo $user_data['background'] ? $user_data['background'] : 'default' ?>" accept="image/*" type="file" limit="20000" name="profile_bg" id="profile_bg">
                     <label for="profile_bg">
                         Выбрать фон профиля
                     </label>
