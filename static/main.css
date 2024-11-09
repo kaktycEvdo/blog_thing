@@ -169,7 +169,7 @@ main > section:first-child{
     padding: 10px;
     border-radius: 5px;
 }
-#blogpage > #stories video{
+#blogpage > #stories video, #blogpage > #stories img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -577,6 +577,13 @@ nav.bignav #dropdown:checked + label {
     width: calc(140px * 2);
     height: calc(30vh * 2);
     object-fit: cover;
+}
+
+.modal_stories.shown .modal_content > div:nth-child(2){
+    width: 60vw;
+    display: grid;
+    grid-template-columns: 90% 10%;
+    order: -1;
 }
 
 /* other */

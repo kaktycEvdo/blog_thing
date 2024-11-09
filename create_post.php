@@ -136,7 +136,7 @@ if(isset($_POST['type']) && $user_data){
         }
         case 3:{
             $query = $mysql->query('SELECT id FROM stories WHERE author = '.$_SESSION['user_id'].' ORDER BY id DESC', PDO::FETCH_COLUMN, 0);
-            $createQ = $mysql->prepare('INSERT INTO stories (author, content, media, comment_ability) VALUES ('.$_SESSION['user_id'].', :description, :media, :commentary)');
+            $createQ = $mysql->prepare('INSERT INTO stories (author, name, media, comment_ability) VALUES ('.$_SESSION['user_id'].', :description, :media, :commentary)');
 
             $id = $query->fetch();
             if(is_null($id) || $id == ''){
@@ -156,7 +156,6 @@ if(isset($_POST['type']) && $user_data){
             }
             if(isset($_FILES['story'])){
                 $story = $_FILES['story'];
-                var_dump($story);
                 $profile_name = $user_data['name'];
                 $storyvideoname = 'story'.$id.'media'.$story['name'];
                 $to = 'static/user/'.$profile_name.'/stories/'.$storyvideoname;
@@ -176,7 +175,7 @@ if(isset($_POST['type']) && $user_data){
                     die;
                 }
 
-                $createQ->bindParam('link', $storyvideoname);
+                $createQ->bindParam('media', $storyvideoname);
             }
             else{
                 $_SESSION['response'] = [1, 'Ошибка: нет видео/изображения'];

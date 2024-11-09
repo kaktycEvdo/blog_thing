@@ -21,14 +21,27 @@
         $getPostsQ = $mysql->query('SELECT * FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY last_change_date', PDO::FETCH_ASSOC);
         $getStoriesQ = $mysql->query('SELECT * FROM stories WHERE author = '.$_SESSION['user_id'].' ORDER BY publish_date', PDO::FETCH_ASSOC);
         
-    function echoStory($name, $date, $src){
-        echo '<div>
-            <div>'.$name.'</div>
-            <video src="'.$src.'"></video>
-            <div>'.$date.'</div>
-        </div>';
+    function echoStory($id, $name, $date, $src, $author_data){
+        $file = 'static/user/'.$author_data['name'].'/stories/'.$src;
+        $date = date('d.m.Y', strtotime($date));
+        if(preg_match('/image\//', mime_content_type($file))){
+            echo '<div id="'.$id.'">
+                <div>'.$name.'</div>
+                <img src="'.$file.'" />
+                <div>'.$date.'</div>
+            </div>';
+        }
+        else if(preg_match('/video\//', mime_content_type($file))){
+            echo '<div id="'.$id.'">
+                <div>'.$name.'</div>
+                <video autoplay muted src="'.$file.'"></video>
+                <div>'.$date.'</div>
+            </div>';
+        }
+        
     }
     function echoPost($post, $author_data){
+        $post['last_change_date'] = date('d.m.Y', strtotime($post['last_change_date']));
         switch($post['type']){
             case 1:{
                 echo '<div class="text_post '.(isset($post['media']) ? 'with_cover' : null).'">
@@ -70,8 +83,8 @@
 
         if($stories){
             echo '<section id="stories">';
-            foreach ($stories as $_ => $story) {
-                echoStory($story['name'], $story['publish_date'], $story['media']);
+            foreach ($stories as $id => $story) {
+                echoStory($id, $story['name'], $story['publish_date'], $story['media'], $author_data);
             }
             echo '</section>';
         }
@@ -115,7 +128,7 @@
         <div class="modal_content">
             <div class="interface">
                 <div></div>
-                <button class="new_post_close">x</button>
+                <button class="modal_close">x</button>
             </div>
             <?php include_once 'view/modal/new_post.php'; ?>
         </div>
@@ -124,7 +137,7 @@
         <div class="modal_content">
             <div class="interface">
                 <div></div>
-                <button class="new_post_close">x</button>
+                <button class="modal_close">x</button>
             </div>
             <?php include_once 'view/modal/post_content.php'; ?>
         </div>
@@ -133,20 +146,24 @@
         <div class="modal_content">
             <div class="interface">
                 <div></div>
-                <button class="new_post_close">x</button>
+                <button class="modal_close">x</button>
             </div>
             <?php include_once 'view/modal/edit_post.php'; ?>
         </div>
     </div>
-    <div id="story" class="modal">
-        <div class="modal_content">
-            <div class="interface">
-                <div></div>
-                <button class="new_post_close">x</button>
-            </div>
-            <?php include_once 'view/modal/story.php'; ?>
-        </div>
-    </div>
+    <?php
+        foreach ($stories as $id => $content) {
+            echo '<div id="story'.$id.'" class="modal modal_stories">
+                    <div class="modal_content">
+                        <div class="interface">
+                            <div></div>
+                            <button class="modal_close">x</button>
+                        </div>';
+            include 'view/modal/story.php';
+            echo '</div>
+                </div>';
+        }
+    ?>
     <section id="do_limit">
         <div>
             <h2>Задать лимит постов:</h2>
@@ -189,17 +206,37 @@
 </div>
 <script>
     let section = document.querySelector("#input_new");
-    let closeButton = document.querySelector(".new_post_close");
-    var modal = document.querySelector("#new_post");
-    function openModal(){
-        modal.classList.add('shown');
-        document.body.scroll;
+    let stories = document.querySelectorAll('#stories > div');
+
+    let closeButton = document.querySelectorAll(".modal_close");
+
+    let modal = document.querySelector("#new_post");
+    let modal_stories = document.querySelectorAll(".modal_stories");
+    var modals = [modal, modal_stories];
+
+    function openModal(modal_i){
+        modal_i.classList.add('shown');
     }
     function closeModal(){
-        modal.classList.remove('shown');
+        for(let i = 0; i < modals.length; i++){
+            if(modals[i].length){
+                for(let j = 0; j < modals[i].length; j++) modals[i][j].classList.remove('shown');
+            }
+            else{
+                modals[i].classList.remove('shown');
+            }
+        }
     }
-    section.addEventListener('click', () => openModal());
-    closeButton.addEventListener('click', () => closeModal());
+    section.addEventListener('click', () => openModal(modal));
+    stories.forEach(story => {
+        story.addEventListener('click', (e) => {
+            openModal(modal_stories[e.currentTarget.id]);
+        }); 
+    });
+
+    closeButton.forEach(btn => {
+        btn.addEventListener('click', () => closeModal()); 
+    });
     window.addEventListener('keydown', (e) => {
         if(e.key == 'Escape'){
             closeModal();

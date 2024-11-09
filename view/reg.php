@@ -33,48 +33,18 @@ else{
         $to = 'static/user-default.png';
     } else {
         $to = 'static/user/'.$_POST['name'].'/'.$_FILES['pfp']['name'];
-    }
-
-    if(!is_dir('static/user/'.$user_data['name'])){
-        mkdir('static/user/'.$user_data['name']);
-    }
-    
-    if ($_FILES['pfp']['error'] > 0) {
-        echo 'Проблема: ';
-        switch ($_FILES['pfp']['error']) {
-            case 1: echo 'Размер файла больше upload_max_filesize';
-            break;
-            case 2: echo 'Размер файла больше max_file_size';
-            break;
-            case 3: echo 'Загружена только часть файла';
-            break;
-            case 4: echo 'Файл не загружен';
-            break;
-            case 6: echo 'Загрузка невозможна: не задан временный каталог';
-            break;
-            case 7: echo 'Загрузка не выполнена: невозможна запись на диск';
-            break;
+        if(!is_dir('static/user/'.$user_data['name'])){
+            mkdir('static/user/'.$user_data['name']);
         }
-        die;
-    }
+        $img = $_FILES['pfp'];
     
-    if ($_FILES['pfp']['type'] != 'image/jpg' &
-    $_FILES['pfp']['type'] != 'image/jpeg' &&
-    $_FILES['pfp']['type'] != 'image/png' &&
-    $_FILES['pfp']['type'] != 'image/webp'){
-        echo 'Файл не является изображением';
-        die;
-    }
+        $imgVal = validateImage($img, $to);
 
-    if (is_uploaded_file($_FILES['pfp']['tmp_name'])) {
-        if (!move_uploaded_file($_FILES['pfp']['tmp_name'], $to)) {
-            echo 'Проблема: невозможно переместить файл в каталог назначения';
+        if($imgVal[0] == 1){
+            $_SESSION['response'] = $imgVal;
+            header('Location: reg');
             die;
         }
-    } else {
-        echo 'Проблема: возможна атака через загрузку файла. Файл: ';
-        echo $_FILES['pfp']['name'];
-        die;
     }
 
     // do the thing

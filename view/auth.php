@@ -40,6 +40,8 @@ else{
     }
     else{
         $_SESSION['response'] = [1, 'Ошибка авторизации: неверные данные'];
+        header('Location: auth');
+        die;
     }
 
     header('Location: profile');

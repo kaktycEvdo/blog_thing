@@ -3,11 +3,14 @@ window.onload = () => {
     let modal_status2 = document.querySelector('.modal.merror');
 
     if(modal_status1 || modal_status2){
-        alert('a');
         setTimeout(() => {
-            document.querySelector('main section').removeChild(modal_status1);
-            document.querySelector('main section').removeChild(modal_status2);
-        }, 5000);
+            if(modal_status1){
+                document.querySelector('main section').removeChild(modal_status1);
+            }
+            else{
+                document.querySelector('main section').removeChild(modal_status2);
+            }
+        }, 2500);
     }
 }
 
