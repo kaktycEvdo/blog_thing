@@ -48,6 +48,21 @@
                 header('Location: auth');
             }
             break;
+        case '/blogpage':
+            if(isset($_GET['user']) || isset($_SESSION['user_id'])){
+                if(!isset($_GET['user'])){
+                    $_SESSION['left_user_id'] = $_SESSION['user_id'];
+                    header('Location: about');
+                }
+                else{
+                    $_SESSION['left_user_id'] = $_GET['user'];
+                    include_once 'view/blogpage.php';
+                }
+            }
+            else{
+                header('Location: ../'.$dir);
+            }
+            break;
         case '/reg':
             include_once 'view/reg.php';
             break;

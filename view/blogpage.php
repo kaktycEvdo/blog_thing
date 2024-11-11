@@ -18,8 +18,8 @@
         $authorDataQ->bindParam('id', $id);
         $authorDataQ->execute();
         $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
-        $getPostsQ = $mysql->query('SELECT * FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY last_change_date', PDO::FETCH_ASSOC);
-        $getStoriesQ = $mysql->query('SELECT * FROM stories WHERE author = '.$_SESSION['user_id'].' ORDER BY publish_date', PDO::FETCH_ASSOC);
+        $getPostsQ = $mysql->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY last_change_date', PDO::FETCH_ASSOC);
+        $getStoriesQ = $mysql->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY publish_date', PDO::FETCH_ASSOC);
         
     function echoStory($id, $name, $date, $src, $author_data){
         $file = 'static/user/'.$author_data['name'].'/stories/'.$src;
@@ -154,11 +154,7 @@
     <?php
         foreach ($stories as $id => $content) {
             echo '<div id="story'.$id.'" class="modal modal_stories">
-                    <div class="modal_content">
-                        <div class="interface">
-                            <div></div>
-                            <button class="modal_close">x</button>
-                        </div>';
+                    <div class="modal_content">';
             include 'view/modal/story.php';
             echo '</div>
                 </div>';
@@ -212,21 +208,8 @@
 
     let modal = document.querySelector("#new_post");
     let modal_stories = document.querySelectorAll(".modal_stories");
-    var modals = [modal, modal_stories];
+    var modals = document.querySelectorAll(".modal");
 
-    function openModal(modal_i){
-        modal_i.classList.add('shown');
-    }
-    function closeModal(){
-        for(let i = 0; i < modals.length; i++){
-            if(modals[i].length){
-                for(let j = 0; j < modals[i].length; j++) modals[i][j].classList.remove('shown');
-            }
-            else{
-                modals[i].classList.remove('shown');
-            }
-        }
-    }
     section.addEventListener('click', () => openModal(modal));
     stories.forEach(story => {
         story.addEventListener('click', (e) => {

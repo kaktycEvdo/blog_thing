@@ -103,7 +103,8 @@ else{
         }
         $to = str_replace('static/', '', $to);
         $qChangeBG->bindParam('bg', $to);
-        if($qChangeBG->execute()) $_SESSION['response'] = [1, 'Изменения успешны'];
+        if($qChangeBG->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+        else $_SESSION['response'] = [1, 'Изменение не вышло'];
     }
 
     header("Location: profile");

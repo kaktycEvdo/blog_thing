@@ -29,7 +29,7 @@ else{
 
     $to = '';
 
-    if(!isset($_FILES['pfp']) || $_FILES['pfp'] == 'default'){
+    if(!isset($_FILES['pfp']) || $_FILES['pfp'] == 'default' || $_FILES['pfp']['name'] == ''){
         $to = 'static/user-default.png';
     } else {
         $to = 'static/user/'.$_POST['name'].'/'.$_FILES['pfp']['name'];

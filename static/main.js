@@ -12,6 +12,28 @@ window.onload = () => {
             }
         }, 2500);
     }
+
+    let modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if(e.currentTarget == modal){
+                modal.classList.remove('shown');
+            }
+        })
+    })
+}
+function openModal(modal_i){
+    modal_i.classList.add('shown');
+}
+function closeModal(){
+    for(let i = 0; i < modals.length; i++){
+        if(modals[i].length){
+            for(let j = 0; j < modals[i].length; j++) modals[i][j].classList.remove('shown');
+        }
+        else{
+            modals[i].classList.remove('shown');
+        }
+    }
 }
 
 // do interface later i guess

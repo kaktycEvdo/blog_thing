@@ -128,7 +128,7 @@ main > section:first-child{
     justify-content: left;
     padding: 20px;
 }
-.main_users > div{
+.main_users > a{
     background-color: var(--bg_sub_color);
     padding: 20px;
     border-radius: 10px;
@@ -136,6 +136,9 @@ main > section:first-child{
     flex-direction: column;
     width: 100%;
     height: 20vh;
+}
+.main_users > a img{
+    width: 100%;
 }
 
 /* blogpage */
@@ -174,6 +177,7 @@ main > section:first-child{
     height: 100%;
     object-fit: cover;
     border-radius: 5px;
+    box-shadow: 0 0 10px 1px var(--bg_darker_color);
 }
 
 #blogpage > #input_new{
@@ -182,6 +186,7 @@ main > section:first-child{
     background-color: var(--bg_darker_color);
     border-radius: 5px;
     gap: 20px;
+    box-shadow: 0 0 10px 1px var(--bg_darker_color);
 }
 #blogpage > #input_new > input{
     background-color: var(--bg_darker_color);
@@ -220,6 +225,7 @@ main > section:first-child{
     background-color: var(--bg_sub_color);
     padding: 30px;
     border-radius: 5px;
+    box-shadow: 0 0 10px 1px var(--bg_darker_color);
 }
 #blogs .posts .extras{
     display: flex;
@@ -380,6 +386,7 @@ nav.bignav #dropdown:checked + label {
     width: 300px;
     background-color: var(--bg_sub_color);
     order: -1;
+    box-shadow: 0 0 10px 1px var(--bg_darker_color);
 }
 #left-panel.hidden{
     display: none;
@@ -584,6 +591,14 @@ nav.bignav #dropdown:checked + label {
     display: grid;
     grid-template-columns: 90% 10%;
     order: -1;
+}
+.modal_stories.shown img, .modal_stories.shown video{
+    height: 60vh;
+}
+.modal_stories.shown .modal_content{
+    display: flex;
+    padding: 0;
+    background: transparent;
 }
 
 /* other */
