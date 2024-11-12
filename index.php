@@ -8,20 +8,21 @@
     <link rel="stylesheet" href="static/main.css">
 </head>
 <body>
+<script src="static/main.js"></script>
     <?php
     $dir = '/blog-project';
     echo '<main>';
     echo '<section>';
-    include_once 'view/components/header.php';
     session_start();
+    require 'connect_to_db.php';
+    require_once 'profile_info.php';
+
+    include_once 'view/components/header.php';
     if(isset($_SESSION['response'])){
         $res = $_SESSION['response'];
         echo '<div class="modal '.($res[0] ? "merror" : "msuccess").'">'.$res[1].'</div>';
         $_SESSION['response'] = null;
     }
-
-    require 'connect_to_db.php';
-    require 'profile_info.php';
     
     $url = explode('?', $_SERVER['REQUEST_URI'])[0];
     $url = str_replace($dir, '',  $url);
@@ -71,6 +72,10 @@
             break;
         case '/create_post':
             include_once 'create_post.php';
+            break;
+        case '/pin_post':
+            include_once 'pin_post.php';
+            break;
         default:
             include_once 'view/404.html';
             break;
@@ -79,6 +84,5 @@
     include_once 'view/components/leftpanel.php';
     echo '</main>';
     ?>
-    <script src="static/main.js"></script>
     </body>
 </html>

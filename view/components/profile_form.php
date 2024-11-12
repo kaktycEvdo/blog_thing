@@ -6,6 +6,10 @@
             <input type="email" name="email"  value="<?php echo $user_data['email'] ?>" placeholder="Электронная почта">
             <input type="password" name="newPassword" value="" placeholder="Новый пароль" autocomplete="new-password">
             <input type="password" name="repeatPassword" value="" placeholder="Подтвердите пароль" autocomplete="new-password">
+            <div class="desc_change">
+                <textarea placeholder="Краткое описание" name="brief" id="brief"><?php echo $user_data['brief'] ?></textarea>
+                <textarea placeholder="Описание" name="description" id="description"><?php echo $user_data['description'] ?></textarea>
+            </div>
             <div>
                 <input type="submit" value="Сохранить">
                 <button>Сбросить</button>
@@ -19,7 +23,7 @@
                 </select>
             </div>
             <div class="pfp">
-                <img id="pfp-output" src="static/<?php echo $user_data['pfp'] ?>" alt="Profile avatar">
+                <img id="pfp-output" src="static/user/<?php echo $user_data['name'].'/'.$user_data['pfp'] ?>" alt="Profile avatar">
                 <div>
                     <input value="<?php echo $user_data['pfp'] ? $user_data['pfp'] : 'default' ?>" accept="image/*" type="file" limit="20000" name="profile_image" id="profile_image">
                     <label for="profile_image">
@@ -31,7 +35,7 @@
                 </div>
             </div>
             <div class="bg">
-                <img id="bg-output" src="static/<?php echo $user_data['background'] ?>" alt="No background">
+                <img id="bg-output" src="static/user/<?php echo $user_data['name'].'/'.$user_data['background'] ?>" alt="No background">
                 <div>
                     <input value="<?php echo $user_data['background'] ? $user_data['background'] : 'default' ?>" accept="image/*" type="file" limit="20000" name="profile_bg" id="profile_bg">
                     <label for="profile_bg">

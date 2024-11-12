@@ -14,14 +14,15 @@ window.onload = () => {
     }
 
     let modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if(e.currentTarget == modal){
-                modal.classList.remove('shown');
-            }
-        })
-    })
+    // modals.forEach(modal => {
+    //     modal.addEventListener('click', (e) => {
+    //         if(e.currentTarget.id == modal.id){
+    //             modal.classList.remove('shown');
+    //         }
+    //     })
+    // });
 }
+
 function openModal(modal_i){
     modal_i.classList.add('shown');
 }

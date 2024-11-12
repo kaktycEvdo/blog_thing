@@ -6,22 +6,13 @@
         ?>        
             <a href="blogpage?user=<?php echo $user['id']; ?>">
                 <div class="profile_media">
-                    <div class="background">
-                        <img src="static/<?php echo $user['background']; ?>">
-                    </div>
                     <div class="pfp">
-                        <img src="static/<?php echo isset($user['pfp']) ? $user['pfp'] : 'user-default.png' ?>">
+                        <img src="static/<?php echo isset($user['pfp']) && $user['pfp'] != 'user-default.png' ? 'user/'.$user['name'].'/'.$user['pfp'] : 'user-default.png' ?>" />
                     </div>
                 </div>
                 <div class="brief">
-                    <!-- Profile's name and description -->
                     <p><?php echo $user['name'] ?></p>
-                    <p><?php echo $user['brief'] ?></p>
-                    <div class="contacts">
-                        <a href="custom link"><img src="" alt="Twitter link"></a>
-                        <a href="custom link"><img src="" alt="VK link"></a>
-                        <a href="custom link"><img src="" alt="Pinterest link"></a>
-                    </div>
+                    <textarea disabled><?php echo $user['brief'] ?></textarea>
                 </div>
             </a>
         <?php

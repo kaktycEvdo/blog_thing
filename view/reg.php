@@ -49,12 +49,11 @@ else{
 
     // do the thing
 
-    $to = str_replace('static/', '', $to);
     $query = $mysql->prepare('INSERT INTO users(name, email, password, pfp) VALUES (:name, :email, :password, :pfp)');
     $query->bindValue('name', $_POST['name']);
     $query->bindValue('email', $_POST['email']);
     $query->bindValue('password', hash('sha256', $_POST['password']));
-    $query->bindValue('pfp', $to);
+    $query->bindValue('pfp', $_FILES['pfp']);
 
     if(!$query->execute()){
         echo 'Ошибка создания пользователя';

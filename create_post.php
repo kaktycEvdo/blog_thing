@@ -17,7 +17,7 @@ if(isset($_POST['type']) && $user_data){
             }
             $content = $_POST['content'];
             $createQ->bindParam('content', $content);
-            if(isset($_FILES['cover'])){
+            if(isset($_FILES['cover']) && $_FILES['cover']['name'] != ''){
                 $img = $_FILES['cover'];
                 $profile_name = $user_data['name'];
                 $postcovername = 'post'.$id.'cover'.$img['name'];
@@ -35,14 +35,16 @@ if(isset($_POST['type']) && $user_data){
                 $createQ->bindParam('cover', $postcovername);
             }
             else{
-                $createQ->bindParam('cover', null);
+                $null = null;
+                $createQ->bindParam('cover', $null);
             }
             if(isset($_POST['commentary'])){
                 $commentary = $_POST['commentary'] == 'on' ? 1 : 0;
                 $createQ->bindParam('commentary', $commentary);
             }
             else{
-                $createQ->bindParam('commentary', false);
+                $false = false;
+                $createQ->bindParam('commentary', $false);
             }
 
             isset($_POST['tags_t'])
@@ -206,5 +208,5 @@ if(isset($_POST['type']) && $user_data){
 }
 else{
     $_SESSION['response'] = [1, 'Ошибка: пустой пост или неавторизованный пользователь'];
-    header('Location: ../');
+    header('Location: ../'.$dir);
 }

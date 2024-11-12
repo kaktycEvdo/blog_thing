@@ -87,6 +87,22 @@ main > section:first-child{
     grid-row: 1 / 3;
     gap: 20px;
 }
+.profile_page > form > div .desc_change{
+    display: grid;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    grid-template-columns: 300px;
+    grid-template-rows: 70px 200px;
+}
+.profile_page > form > div .desc_change textarea{
+    resize: vertical;
+    background-color: var(--bg_darker_color);
+    border: 2px solid var(--bg_sub_color);
+    width: 100%;
+    height: 100%;
+}
 .profile_page > form > .image-select{
     display: flex;
     flex-direction: column;
@@ -124,18 +140,45 @@ main > section:first-child{
 .main_users{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 20px;
-    justify-content: left;
+    gap: 60px;
     padding: 20px;
 }
 .main_users > a{
     background-color: var(--bg_sub_color);
     padding: 20px;
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     width: 100%;
-    height: 20vh;
+    height: 40vh;
+    grid-template-rows: 30% auto;
+    text-align: center;
+}
+.main_users > a > .brief{
+    display: grid;
+    grid-template-rows: auto 70%;
+}
+.main_users > a > .brief > textarea{
+    background-color: var(--bg_darker_color);
+    resize: none;
+    border: 2px solid var(--bg_sub_color);
+    padding: 5px;
+}
+.main_users > a .profile_media{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main_users > a .pfp img{
+    height: 70px;
+    width: 70px;
+    border-radius: 100%;
+    border: 2px solid var(--font_color);
+}
+.main_users > a .pfp{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .main_users > a img{
     width: 100%;
@@ -223,9 +266,35 @@ main > section:first-child{
     flex-direction: column;
     gap: 10px;
     background-color: var(--bg_sub_color);
-    padding: 30px;
     border-radius: 5px;
     box-shadow: 0 0 10px 1px var(--bg_darker_color);
+}
+#blogs .posts > div > a:first-child{
+    position: absolute;
+    display: flex;
+    align-self: end;
+    margin: 10px;
+    border-radius: 100%;
+    background-color: var(--bg_darker_color);
+    padding: 5px;
+    width: 20px;
+    height: 20px;
+}
+#blogs .posts > div > a:first-child:hover{
+    background-color: var(--accent_color);
+}
+#blogs .posts > div > a:first-child svg{
+    width: 20px;
+    height: 20px;
+}
+#blogs .posts > div > a:first-child path{
+    fill: var(--font_color);
+}
+#blogs .posts .inner{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
 }
 #blogs .posts .extras{
     display: flex;
@@ -243,10 +312,23 @@ main > section:first-child{
     color: var(--accent_color);
     font-size: smaller;
     float: right;
+    margin-left: 5px;
 }
-#blogs .with_cover > img{
+#blogs .posts > :not(.with_cover, .video_post){
+    padding-top: 20px;
+}
+#blogs .posts > :not(.with_cover, .video_post) a:first-child{
+    bottom: -5px;
+}
+#blogs .with_cover > a.cover{
     height: 15rem;
     width: 100%;
+    object-fit: cover;
+}
+#blogs .with_cover img{
+    height: 15rem;
+    width: 100%;
+    border-radius: 5px 5px 0 0;
     object-fit: cover;
 }
 #blogs .video_post video{

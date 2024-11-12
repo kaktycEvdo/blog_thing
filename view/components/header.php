@@ -11,9 +11,20 @@
             <label for="dropdown">
                 Статьи
                 <div id="custom_pages">
-                    <a href="">Статья 1</a>
-                    <a href="">Статья 2</a>
-                    <a href="">Статья 3</a>
+                    <?php
+                    if(isset($_SESSION['user_id'])){
+                        $stmt = $mysql->query('SELECT id, content FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
+                        $pins = $stmt->fetchAll();
+                        if($pins){
+                            foreach ($pins as $pin) {
+                                echo '<a href="blog?id='.$pin['id'].'">'.$pin['content'].'</a>';
+                            }
+                        }
+                        else{
+                            echo '<p>Нет закрепов</p>';
+                        }
+                    }
+                    ?>
                 </div>
                 <div class="arrow_down"></div>
             </label>
