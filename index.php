@@ -64,6 +64,9 @@
                 header('Location: ../'.$dir);
             }
             break;
+        case '/blog':
+            include_once 'view/blog.php';
+            break;
         case '/reg':
             include_once 'view/reg.php';
             break;

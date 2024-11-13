@@ -283,6 +283,12 @@ main > section:first-child{
 #blogs .posts > div > a:first-child:hover{
     background-color: var(--accent_color);
 }
+#blogs .posts > div > a:first-child.pinned{
+    background-color: var(--accent_color);
+}
+#blogs .posts > div > a:first-child.pinned:hover{
+    background-color: var(--other_color);
+}
 #blogs .posts > div > a:first-child svg{
     width: 20px;
     height: 20px;
@@ -681,6 +687,9 @@ nav.bignav #dropdown:checked + label {
     display: flex;
     padding: 0;
     background: transparent;
+}
+.modal#contact{
+
 }
 
 /* other */

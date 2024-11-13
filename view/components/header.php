@@ -17,12 +17,15 @@
                         $pins = $stmt->fetchAll();
                         if($pins){
                             foreach ($pins as $pin) {
-                                echo '<a href="blog?id='.$pin['id'].'">'.$pin['content'].'</a>';
+                                echo '<a href="blog?id='.$pin['id'].'">'.(substr($pin['content'], 0, 30)).'</a>';
                             }
                         }
                         else{
                             echo '<p>Нет закрепов</p>';
                         }
+                    }
+                    else{
+                        echo '<a href="auth">Авторизуйтесь для закрепления</a>';
                     }
                     ?>
                 </div>

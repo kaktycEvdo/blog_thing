@@ -13,7 +13,17 @@ window.onload = () => {
         }, 2500);
     }
 
-    let modals = document.querySelectorAll('.modal');
+    let closeButton = document.querySelectorAll(".modal_close");
+
+    closeButton.forEach(btn => {
+        btn.addEventListener('click', () => closeModal()); 
+    });
+    window.addEventListener('keydown', (e) => {
+        if(e.key == 'Escape'){
+            closeModal();
+        }
+    });
+    
     // modals.forEach(modal => {
     //     modal.addEventListener('click', (e) => {
     //         if(e.currentTarget.id == modal.id){
@@ -27,6 +37,8 @@ function openModal(modal_i){
     modal_i.classList.add('shown');
 }
 function closeModal(){
+    var modals = document.querySelectorAll('.modal');
+    
     for(let i = 0; i < modals.length; i++){
         if(modals[i].length){
             for(let j = 0; j < modals[i].length; j++) modals[i][j].classList.remove('shown');

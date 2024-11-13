@@ -10,7 +10,7 @@
                         <?php echo $luser_data['background'] != '' ? '<img src="static/user/'.$luser_data['name'].'/'.$luser_data['background'].'" alt="profile background"/>' : ''; ?>
                     </div>
                     <div class="pfp">
-                        <img src="static/user/<?php echo $luser_data['name'].'/'.$luser_data['pfp'] ?>" alt="PFP">
+                        <?php echo $luser_data['pfp'] != '' && $luser_data['pfp'] != 'user-default.png' ? '<img src="static/user/'.$luser_data['name'].'/'.$luser_data['pfp'].'" alt="PFP">' : '<img src="static/user-default.png" alt="PFP">'; ?>
                     </div>
                 </div>
                 <div class="brief">
@@ -32,13 +32,19 @@
                     <a href="#" class="generic-button" id="contact_button">Написать мне</a>
                 </div>
             </div>
-            <div class="modal contact">
-            <?php include 'contact.php'; ?>
+            <div id="contact" class="modal">
+                <div class="modal_content">
+                    <div class="interface">
+                        <div></div>
+                        <button class="modal_close">x</button>
+                    </div>
+                    <?php include 'view/modal/contact.php'; ?>
+                </div>
             </div>
         </section>
         <script>
-            let contact_modal = document.querySelector('.modal.contact');
+            let contact_modal = document.querySelector('.modal#contact');
             let contact_op_button = document.querySelector('#contact_button');
-            contact_op_button.addEventListener('click', () => openModal(contact_modal))
+            contact_op_button.addEventListener('click', () => openModal(contact_modal));
         </script>
     <?php }

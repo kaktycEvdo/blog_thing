@@ -1,22 +1,45 @@
 <?php
 if(isset($_POST['type']) && $user_data){
+    function checkHeader($createQ): bool{
+        if(!isset($_POST['header'])){
+            $createQ->bindParam('header', null);
+            return 1;
+        }
+        else{
+            if(strlen($_POST['header']) > 500){
+                $_SESSION['response'] = [1, 'Ошибка: слишком длинный заголовок видео'];
+                header('Location: about');
+                die;
+            }
+            $header = $_POST['header'];
+            $createQ->bindParam('header', $header);
+            return 1;
+        }
+    }
+    function checkContent($createQ, $isVideo): bool{
+        if($isVideo){
+            $createQ->bindParam('content', null);
+            return 1;
+        }
+        if(!isset($_POST['content'])){
+            $_SESSION['response'] = [1, 'Ошибка: пустой пост'];
+            header('Location: about');
+            die;
+        }
+        $content = $_POST['content'];
+        $createQ->bindParam('content', $content);
+        return 1;
+    }
     require_once 'checking_module.php';
     switch($_POST['type']){
         case 1:{
             $query = $mysql->query('SELECT id FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY id DESC', PDO::FETCH_COLUMN, 0);
-            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability, type) VALUES ('.$_SESSION['user_id'].', :content, :cover, :tags, :commentary, 1)');
+            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability, type, header) VALUES ('.$_SESSION['user_id'].', :content, :cover, :tags, :commentary, 1, :header)');
 
             $id = $query->fetch();
             if(is_null($id) || $id == ''){
                 $id = 0;
             }
-            if(!isset($_POST['content'])){
-                $_SESSION['response'] = [1, 'Ошибка: пустой пост'];
-                header('Location: about');
-                die;
-            }
-            $content = $_POST['content'];
-            $createQ->bindParam('content', $content);
             if(isset($_FILES['cover']) && $_FILES['cover']['name'] != ''){
                 $img = $_FILES['cover'];
                 $profile_name = $user_data['name'];

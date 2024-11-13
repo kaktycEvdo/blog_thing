@@ -13,6 +13,10 @@
             <img id="pre_cover" alt="Вставить обложку">
             <input type="file" name="cover" id="cover" accept="image/*">
         </label>
+        <label for="header">
+            Название поста:
+        </label>
+        <textarea name="header" id="header"></textarea>
         <label for="content">
             Текст поста:
         </label>
