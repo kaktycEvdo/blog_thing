@@ -82,7 +82,7 @@ else{
             mkdir('static/user/'.$user_data['name']);
         }
 
-        $res = validateImage($img, $to);
+        $res = validateMedia($img, $to);
 
         if($res[0] == 1){
             $_SESSION['response'] = $res;
@@ -114,7 +114,7 @@ else{
             mkdir('static/user/'.$user_data['name']);
         }
 
-        $res = validateImage($img, $to);
+        $res = validateMedia($img, $to);
 
         if($res[0] == 1){
             $_SESSION['response'] = $res;

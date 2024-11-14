@@ -13,10 +13,7 @@
             <img id="pre_cover" alt="Вставить обложку">
             <input type="file" name="cover" id="cover" accept="image/*">
         </label>
-        <label for="header">
-            Название поста:
-        </label>
-        <textarea name="header" id="header"></textarea>
+        <!-- Позднее необходимо сделать форматирование текста -->
         <label for="content">
             Текст поста:
         </label>
@@ -30,10 +27,6 @@
             <video id="pre_video" src=""></video>
             <input id="video" name="video"  type="file" accept="video/*">
         </label>
-        <label for="header">
-            Заголовок поста
-        </label>
-        <textarea name="header" id="header"></textarea>
         <label for="tags_v">Теги</label>
         <input type="text" name="tags_v" id="tags_v">
     </div>
@@ -51,7 +44,11 @@
         <textarea name="description" id="description"></textarea>
     </div>
     <div>
-        <label for="commentary"><input type="checkbox" name="commentary" id="commentary"> Можно ли оставлять комментарии?</label>
+        <label for="header">
+            Заголовок поста
+        </label>
+        <textarea name="header" id="header"></textarea>
+        <label for="commentary"><input type="checkbox" checked name="commentary" id="commentary">Можно ли оставлять комментарии?</label>
         <input type="submit" value="Создать пост">
     </div>
 </form>

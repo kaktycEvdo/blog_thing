@@ -13,11 +13,11 @@
                 <div id="custom_pages">
                     <?php
                     if(isset($_SESSION['user_id'])){
-                        $stmt = $mysql->query('SELECT id, content FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
+                        $stmt = $mysql->query('SELECT id, header FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
                         $pins = $stmt->fetchAll();
                         if($pins){
                             foreach ($pins as $pin) {
-                                echo '<a href="blog?id='.$pin['id'].'">'.(substr($pin['content'], 0, 30)).'</a>';
+                                echo '<a href="blog?id='.$pin['id'].'">'.($pin['header'] != '' ? substr($pin['header'], 0, 30) : 'Пост '.$pin['id']).'</a>';
                             }
                         }
                         else{

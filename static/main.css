@@ -392,6 +392,19 @@ main > section:first-child{
     border-radius: 5px;
 }
 
+/* single post */
+
+.post{
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 320px);
+    padding: 10px;
+}
+.post video, .post img{
+    width: calc(100vw - 500px);
+    max-height: 40vh;
+}
+
 /* header */
 
 header{
@@ -540,6 +553,7 @@ nav.bignav #dropdown:checked + label {
 
 .modal{
     display: none;
+    z-index: 5;
 }
 .modal.merror, .modal.msuccess{
     display: flex;
@@ -591,7 +605,9 @@ nav.bignav #dropdown:checked + label {
     padding: 2px;
 }
 .modal.shown .modal_content .interface button{
-    background-color: var(--other_color);
+    background-color: transparent;
+    font-size: xx-large;
+    height: 20px;
 }
 .modal.shown .modal_content select:hover, .modal.shown .modal_content .interface button:hover{
     filter: brightness(1.5);
@@ -688,8 +704,37 @@ nav.bignav #dropdown:checked + label {
     padding: 0;
     background: transparent;
 }
-.modal#contact{
-
+.modal#contact .modal_content{
+    max-width: 500px;
+    max-height: 342px;
+}
+.modal#contact .modal_content .inner{
+    font-size: smaller;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 500px;
+    height: 342px;
+}
+.modal#contact .modal_content .inner > div{
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 10px;
+}
+.modal#contact .modal_content .inner > form{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 80%;
+}
+.modal#contact input[type='text']{
+    border-bottom: 2px solid var(--bg_color);
+    background-color: var(--bg_sub_color);
+}
+.modal#contact input[type='text']:focus{
+    border-bottom: 2px solid var(--accent_color);
 }
 
 /* other */

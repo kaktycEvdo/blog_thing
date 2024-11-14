@@ -38,7 +38,7 @@ else{
         }
         $img = $_FILES['pfp'];
     
-        $imgVal = validateImage($img, $to);
+        $imgVal = validateMedia($img, $to);
 
         if($imgVal[0] == 1){
             $_SESSION['response'] = $imgVal;

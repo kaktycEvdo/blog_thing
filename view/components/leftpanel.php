@@ -36,7 +36,7 @@
                 <div class="modal_content">
                     <div class="interface">
                         <div></div>
-                        <button class="modal_close">x</button>
+                        <button class="modal_close">×</button>
                     </div>
                     <?php include 'view/modal/contact.php'; ?>
                 </div>

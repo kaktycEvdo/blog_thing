@@ -16,7 +16,7 @@ function validateEmail($email): array{
 }
 
 // only use with $_FILES['imagename']
-function validateImage($img, $to): array{
+function validateMedia($img, $to): array{
     if ($img['error'] > 0) {
         $str = 'Ошибка: ';
         switch ($img['error']) {
@@ -36,11 +36,8 @@ function validateImage($img, $to): array{
         return [1, $str];
     }
     
-    if ($img['type'] != 'image/jpg' &
-    $img['type'] != 'image/jpeg' &&
-    $img['type'] != 'image/png' &&
-    $img['type'] != 'image/webp'){
-        return [1, 'Ошибка: Файл не является изображением'];
+    if (preg_match('/image\//', $img['type']) || preg_match('/video\//', $img['type'])){
+        return [1, 'Ошибка: Файл не является медиа-контентом'];
     }
 
     if (is_uploaded_file($img['tmp_name'])) {
