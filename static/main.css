@@ -397,12 +397,93 @@ main > section:first-child{
 .post{
     display: flex;
     flex-direction: column;
-    width: calc(100vw - 320px);
-    padding: 10px;
+    width: calc(100vw - 460px);
+    margin: 50px;
+    padding: 15px 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 1px var(--bg_darker_color);
+    background-color: var(--bg_sub_color);
 }
 .post video, .post img{
     width: calc(100vw - 500px);
     max-height: 40vh;
+}
+.post_interface{
+    margin-top: 5px;
+}
+.post_interface a{
+    color: var(--font_sub_color);
+}
+.post_interface{
+    display: flex;
+    justify-content: space-between;
+}
+.post > h3{
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+.post .extras{
+    display: flex;
+    gap: 20px;
+}
+.post .extras div{
+    color: var(--font_sub_color);
+}
+.post hr{
+    border: 0;
+    border-top: 1px solid var(--bg_darker_color);
+    margin: 20px 0;
+}
+.post .comment_section{
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: start;
+    gap: 20px;
+}
+.post .comment_section form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+.post .comment_section input[type="text"]{
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    outline: none;
+    resize: vertical;
+    padding: 10px;
+}
+.post .comment_section input[type="text"]::placeholder{
+    color: rgba(255,255,255,0.2);
+}
+.post .comment_section input[type="text"]:focus{
+    border-bottom: 2px solid var(--accent_color);
+}
+.post .comment_section input[type="submit"]{
+    width: fit-content;
+    padding: 10px 18px;
+}
+.comment{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.comment .author_data{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+.comment .author_pfp{
+    width: 30px;
+    height: 30px;
+}
+.comment .author_pfp img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
 }
 
 /* header */

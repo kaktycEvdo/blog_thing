@@ -79,6 +79,9 @@
         case '/pin_post':
             include_once 'pin_post.php';
             break;
+        case '/comment':
+            include_once 'comment.php';
+            break;
         default:
             include_once 'view/404.html';
             break;
