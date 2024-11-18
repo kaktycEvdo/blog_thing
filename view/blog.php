@@ -3,57 +3,7 @@ if(!isset($_GET['id'])){
     header('Location: ../'.$dir);
 }
 else{
-    function formatDisplayTime($interval){
-        $res = '';
-        if($interval['y'] > 0){
-            switch ($interval['y']){
-                case 1:
-                    $res = "1 год назад"; break;
-                case 2:
-                case 3:
-                    $res = $interval['y']." года назад"; break;
-                default:
-                    $res = $interval['y']." лет назад"; break;
-            }
-        }
-        else if($interval['m'] > 0){
-            switch ($interval['m']){
-                case 1:
-                    $res = "1 месяц назад"; break;
-                case 2:
-                case 3:
-                case 4:
-                    $res = $interval['m']." месяца назад"; break;
-                default:
-                    $res = $interval['m']." месяцев назад"; break;
-            }
-        }
-        else if($interval['d'] > 0){
-            switch ($interval['d']){
-                case 1:
-                    $res = "1 день назад"; break;
-                case 2:
-                case 3:
-                case 4:
-                    $res = $interval['d']." дня назад"; break;
-                default:
-                    $res = $interval['d']." дней назад"; break;
-            }
-        }
-        else if($interval['h'] > 0){
-            switch ($interval['h']){
-                case 1:
-                    $res = "час назад"; break;
-                case 2:
-                case 3:
-                case 4:
-                    $res = $interval['h']." часа назад"; break;
-                default:
-                    $res = $interval['h']." часов назад"; break;
-            }
-        }
-        return $res;
-    }
+    require_once 'utility_functions.php';
 
     $blog_id = $_GET['id'];
     $blogQ = $mysql->prepare('SELECT * FROM posts WHERE id = :id');
@@ -66,6 +16,8 @@ else{
     $authorDataQ->bindParam('id', $blog['author']);
     $authorDataQ->execute();
     $author_data = $authorDataQ->fetch();
+
+    $_SESSION['left_user_id'] = $blog['author'];
 
     $blog['last_change_date'] = date('d.m.Y', strtotime($blog['last_change_date']));
 
@@ -83,6 +35,15 @@ else{
         }
     }
 ?>
+        <div class="modal" id="share">
+            <div class="modal_content">
+                <div class="interface">
+                    <div></div>
+                    <button class="modal_close">×</button>
+                </div>
+                <?php include 'view/modal/share.php'; ?>
+            </div>
+        </div>
         <div class="post">
             <div class="post_interface">
                 <div>
@@ -94,6 +55,14 @@ else{
                 <div>
                     <a href="#">поделиться</a>
                 </div>
+                <script>
+                    let share_button = document.querySelector('.post_interface > div:nth-child(2) > a');
+                    share_button.addEventListener('click', (e) => {
+                        e.preventDefault();
+
+                        openModal(document.querySelector('#share'));
+                    });
+                </script>
             </div>
             <?php echo isset($blog['header']) ? "<h3>".$blog['header']."</h3>" : null ?>
             <div class="extras">
@@ -148,13 +117,20 @@ else{
                         <div class="author_pfp"><img src="static/user/'.$author['name'].'/'.$author['pfp'].'"></div>
                         <div class="author_name">
                         <p>'.$author['name'].'</p>
-                        <p>'.$interval->format('%y лет %M месяцев %D дней %h часов %i минут назад').'</p>
+                        <p>'.$display_time.'</p>
                         </div>
                         </div>
                         <div class="comment_data">
                         <div class="comment_text">'.$comment['text'].'</div>
                         </div>
-                        <a class="readmore" href="respond?id='.$comment['id'].'">ответить</a>
+                        <a class="accenttext respond" id="r'.$comment['id'].'">ответить</a>
+                        <form id="f'.$comment['id'].'" class="respond_form hidden" action="comment?response='.$comment['id'].'&blog_id='.$blog_id.'" method="POST">
+                        <input type="text" placeholder="Текст ответа" name="text">
+                        <div>
+                        <input type="submit" value="Ответить">
+                        <button id="c'.$comment['id'].'" class="other-button respond_cancel">Отмена</button>
+                        </div>
+                        </form>
                         </div>';
                     }
                 }
@@ -166,5 +142,39 @@ else{
                 </div>';
             }
             ?>
+            <script>
+                let respondlinks = document.getElementsByClassName('respond');
+                let cancellinks = document.getElementsByClassName('respond_cancel');
+                let forms = document.getElementsByClassName('respond_form');
+
+                function openForm(form_i, link_i){
+                    // let id = form_i.id.slice(1);
+
+                    link_i.classList.add('hidden');
+                    form_i.classList.remove('hidden');
+                }
+                function closeForm(form_i, link_i){
+                    // let id = form_i.id.slice(1);
+
+                    link_i.classList.remove('hidden');
+                    form_i.classList.add('hidden');
+                }
+                [...respondlinks].forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let form = document.getElementById('f'+link.id.slice(1));
+
+                        openForm(form, link);
+                    })
+                });
+                [...cancellinks].foreach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        let form = document.getElementById('f'+link.id.slice(1));
+
+                        closeForm(form, link);
+                    })
+                })
+            </script>
         </div>
 <?php } ?>
