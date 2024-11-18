@@ -65,9 +65,10 @@ if(isset($_POST['type']) && $user_data){
         }
     }
     function checkTags($createQ, $tags): bool{
-        isset($tags)
+        $null = null;
+        isset($tags) && $tags != ''
             ? $createQ->bindParam('tags', $tags)
-            : $createQ->bindParam('tags', null);
+            : $createQ->bindParam('tags', $null);
         return 1;
     }
     function checkContent($createQ, $isVideo): bool{
@@ -128,7 +129,7 @@ if(isset($_POST['type']) && $user_data){
     switch($_POST['type']){
         case 1:{
             $query = $mysql->query('SELECT id FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY id DESC', PDO::FETCH_COLUMN, 0);
-            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability, type, header) VALUES ('.$_SESSION['user_id'].', :content, :media, :tags, :commentary, 1, :header)');
+            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability, header) VALUES ('.$_SESSION['user_id'].', :content, :media, :tags, :commentary, :header)');
 
             $id = $query->fetch();
             if(is_null($id) || $id == ''){
@@ -157,7 +158,7 @@ if(isset($_POST['type']) && $user_data){
         }
         case 2:{
             $query = $mysql->query('SELECT id FROM posts WHERE author = '.$_SESSION['user_id'].' ORDER BY id DESC', PDO::FETCH_COLUMN, 0);
-            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability, type) VALUES ('.$_SESSION['user_id'].', :header, :media, :tags, :commentary, 2)');
+            $createQ = $mysql->prepare('INSERT INTO posts (author, content, media, tags, comment_ability) VALUES ('.$_SESSION['user_id'].', :header, :media, :tags, :commentary)');
 
             $id = $query->fetch();
             if(is_null($id) || $id == ''){

@@ -59,7 +59,7 @@
                         <div class="extras">
                             <div>
                                 <div class="date">'.$post['last_change_date'].'</div>
-                                '.(isset($post['tags']) ? "<div class='tags'>".$post['tags']."</div>" : null).'
+                                '.(isset($post['tags']) ? "• <div class='tags'>".$post['tags']."</div>" : null).'
                             </div>
                             '.($post['comment_ability'] ? '<a href="blog?id='.$post['id'].'&anch=comments" class="readmore">оставить комментарий</a>' : '').'
                         </div>
@@ -83,7 +83,7 @@
                     <div class="extras">
                         <div>
                             <div class="date">'.$post['last_change_date'].'</div>
-                            '.(isset($post['tags']) ? "<div class='tags'>".$post['tags']."</div>" : null).'
+                            '.(isset($post['tags']) ? "• <div class='tags'>".$post['tags']."</div>" : null).'
                         </div>
                         <div>
                         <a class="readmore" href="blog?id='.$post['id'].'">посмотреть подробнее</a>
@@ -131,10 +131,10 @@
             echo '</section>';
         }
         // $id == 1 => $posts[0:$limit]; $id == 2 => $posts[$limit:$limit*2]
-        $id = 1;
+        $page_id = 1;
         $limit = 4;
         if(isset($_GET['pageid'])){
-            $id = $_GET['pageid'];
+            $page_id = $_GET['pageid'];
         }
         if(isset($_GET['limit'])){
             if($_GET['limit']=='all'){
@@ -218,7 +218,7 @@
     <section id="blogs">
         <div class="posts">
             <?php
-                for($i = ($id-1)*$limit; $i < $id*$limit; $i++){
+                for($i = ($page_id-1)*$limit; $i < $page_id*$limit; $i++){
                     if(!isset($posts[$i])) break;
                     echoPost($posts[$i], $author_data);
                 }
@@ -227,14 +227,15 @@
             <?php
                 if(sizeof($posts) > $limit){
                     echo '<div class="pagination">';
-                    if($id != 1){
+                    if($page_id != 1){
                         echo '<a href="?pageid=1&limit='.$limit.'">&lt;</a>';
-                        echo '<a href="?pageid='.($id-1).'&limit='.$limit.'">'.($id-1).'</a>';
+                        echo '<a href="?pageid='.($page_id-1).'&limit='.$limit.'">'.($page_id-1).'</a>';
                     }
-                    echo '<a href="#" class="active">'.$id.'</a>';
-                    $temp = (sizeof($posts)/$limit) - (sizeof($posts)%$limit);
-                    if($id < $temp){
-                        echo '<a href="?pageid='.($id+1).'&limit='.$limit.'">'.($id+1).'</a>';
+                    echo '<a href="#" class="active">'.$page_id.'</a>';
+                    $temp = ((sizeof($posts)/$limit) - (int)(sizeof($posts)/$limit))*$limit;
+                    // var_dump();
+                    if($page_id <= $temp){
+                        echo '<a href="?pageid='.($page_id+1).'&limit='.$limit.'">'.($page_id+1).'</a>';
                         echo '<a href="?pageid='.$temp.'&limit='.$limit.'">&gt;</a>';
                     }
                     echo '</div>';

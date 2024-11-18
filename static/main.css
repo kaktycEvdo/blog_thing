@@ -322,8 +322,8 @@ main > section:first-child{
 #blogs .posts > :not(.with_cover, .video_post){
     padding-top: 20px;
 }
-#blogs .posts > :not(.with_cover, .video_post) a:first-child{
-    bottom: -5px;
+#blogs .posts > :not(.with_cover, .video_post) > a:first-child{
+    transform: translateY(-20px);
 }
 #blogs .with_cover > a.cover{
     height: 15rem;
@@ -391,6 +391,16 @@ main > section:first-child{
     border-radius: 5px;
 }
 
+/* works page */
+
+.padding_page{
+    margin-top: 40px;
+    padding: 25px;
+}
+h3{
+    margin-bottom: 15px;
+}
+
 /* single post */
 
 .post{
@@ -409,13 +419,15 @@ main > section:first-child{
 }
 .post_interface{
     margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 .post_interface a{
     color: var(--font_sub_color);
 }
-.post_interface{
+.post_interface > div{
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
 }
 .post > h3{
     margin-top: 15px;
@@ -423,7 +435,7 @@ main > section:first-child{
 }
 .post .extras{
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 .post .extras div{
     color: var(--font_sub_color);
@@ -475,7 +487,7 @@ main > section:first-child{
     gap: 20px;
     align-items: center;
 }
-.comment .author_data p:nth-child(2){
+.comment .author_data p{
     color: var(--font_sub_color);
 }
 .comment .author_pfp{
@@ -486,6 +498,10 @@ main > section:first-child{
     width: 100%;
     height: 100%;
     border-radius: 100%;
+}
+
+.response_comment{
+    padding-left: 30px;
 }
 
 .respond_form{

@@ -82,6 +82,9 @@
         case '/comment':
             include_once 'comment.php';
             break;
+        case '/works':
+            include_once 'view/works.php';
+            break;
         default:
             include_once 'view/404.html';
             break;

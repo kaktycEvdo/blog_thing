@@ -47,7 +47,7 @@ else{
         <div class="post">
             <div class="post_interface">
                 <div>
-                    <a href="javascript:history.back()">вернуться обратно</a>
+                    <a href="javascript:history.back()">вернуться назад</a>
                     <a href="pin_post?id=<?php echo $blog['id']?>">
                         <?php echo $blog['pinned'] != 1 ? 'закрепить' : 'закреплено'?>
                     </a>
@@ -67,7 +67,7 @@ else{
             <?php echo isset($blog['header']) ? "<h3>".$blog['header']."</h3>" : null ?>
             <div class="extras">
                 <div class="date"><?php echo $blog['last_change_date'] ?></div>
-                <?php echo isset($blog['tags']) ? "<div class='tags'>".$blog['tags']."</div>" : null ?>
+                <?php echo isset($blog['tags']) ? "• <div class='tags'>".$blog['tags']."</div>" : null ?>
             </div>
             <?php
             if($file){
@@ -89,7 +89,7 @@ else{
             <hr>
             <?php
             if($blog['comment_ability'] == 1){
-                $getCommentsQ = $mysql->prepare('SELECT * FROM comment WHERE post = :id');
+                $getCommentsQ = $mysql->prepare('SELECT * FROM comment WHERE post = :id and response IS NULL');
                 $getCommentsQ->bindParam('id', $blog_id);
                 $getCommentsQ->execute();
 
@@ -101,7 +101,7 @@ else{
                 }
                 else{
                     foreach($comments as $comment){
-                        $stmt = $mysql->prepare('SELECT name, pfp FROM users WHERE id = :id');
+                        $stmt = $mysql->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
                         $stmt->bindParam('id', $comment['author']);
                         $stmt->execute();
                         $author = $stmt->fetch();
@@ -116,7 +116,7 @@ else{
                         <div class="author_data">
                         <div class="author_pfp"><img src="static/user/'.$author['name'].'/'.$author['pfp'].'"></div>
                         <div class="author_name">
-                        <p>'.$author['name'].'</p>
+                        <a href="blogpage?user='.$author['id'].'">'.$author['name'].'</a>
                         <p>'.$display_time.'</p>
                         </div>
                         </div>
@@ -132,6 +132,42 @@ else{
                         </div>
                         </form>
                         </div>';
+                        $responses = $mysql->query('SELECT * FROM comment WHERE response = '.$comment['id'])->fetchAll();
+                        if($responses){
+                            foreach ($responses as $response) {
+                                $stmt = $mysql->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
+                                $stmt->bindParam('id', $response['author']);
+                                $stmt->execute();
+                                $author = $stmt->fetch();
+        
+                                $time = $response['publish_date'];
+                                $datetime1 = date_create($time);
+                                $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
+                                $interval = date_diff($datetime1, $datetime2);
+                                $display_time = formatDisplayTime($interval);
+
+                                echo '<div class="response_comment"><div class="comment">
+                                <div class="author_data">
+                                <div class="author_pfp"><img src="static/user/'.$author['name'].'/'.$author['pfp'].'"></div>
+                                <div class="author_name">
+                                <a href="blogpage?user='.$author['id'].'">'.$author['name'].'</a>
+                                <p>'.$display_time.'</p>
+                                </div>
+                                </div>
+                                <div class="comment_data">
+                                <div class="comment_text">'.$response['text'].'</div>
+                                </div>
+                                <a class="accenttext respond" id="r'.$response['id'].'">ответить</a>
+                                <form id="f'.$response['id'].'" class="respond_form hidden" action="comment?response='.$response['id'].'&blog_id='.$blog_id.'" method="POST">
+                                <input type="text" placeholder="Текст ответа" name="text">
+                                <div>
+                                <input type="submit" value="Ответить">
+                                <button id="c'.$response['id'].'" class="other-button respond_cancel">Отмена</button>
+                                </div>
+                                </form>
+                                </div></div>';
+                            }
+                        }
                     }
                 }
                 echo '</div>';
