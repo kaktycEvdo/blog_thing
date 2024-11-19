@@ -65,10 +65,9 @@ if(isset($_POST['type']) && $user_data){
         }
     }
     function checkTags($createQ, $tags): bool{
-        $null = null;
         isset($tags) && $tags != ''
             ? $createQ->bindParam('tags', $tags)
-            : $createQ->bindParam('tags', $null);
+            : $createQ->bindParam('tags', null, PDO::PARAM_NULL);
         return 1;
     }
     function checkContent($createQ, $isVideo): bool{
