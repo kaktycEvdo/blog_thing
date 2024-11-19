@@ -1,9 +1,5 @@
 <?php
-    if(isset($_POST['type'])){
-        include_once 'create_post.php';
-    }
-    else{
-        $authorDataQ = $mysql->prepare('SELECT name FROM users WHERE id = :id');
+$authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
         $id = 0;
         if(isset($_GET['user'])){
             $id = $_GET['user'];
@@ -18,25 +14,25 @@
         $authorDataQ->bindParam('id', $id);
         $authorDataQ->execute();
         $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
-        $getPostsQ = $mysql->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
-        $getStoriesQ = $mysql->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
+        $getPostsQ = $pdo->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
+        $getStoriesQ = $pdo->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
         
     function echoStory($id, $name, $date, $src, $author_data){
         $file = 'static/user/'.$author_data['name'].'/stories/'.$src;
         $date = date('d.m.Y', strtotime($date));
         if(preg_match('/image\//', mime_content_type($file))){
-            echo '<div id="'.$id.'">
-                <div>'.$name.'</div>
-                <img src="'.$file.'" />
-                <div>'.$date.'</div>
-            </div>';
+            echo "<div id=$id>
+                <div>$name</div>
+                <img src=$file />
+                <div>$date</div>
+            </div>";
         }
         else if(preg_match('/video\//', mime_content_type($file))){
-            echo '<div id="'.$id.'">
-                <div>'.$name.'</div>
-                <video autoplay muted src="'.$file.'"></video>
-                <div>'.$date.'</div>
-            </div>';
+            echo "<div id=$id>
+                <div>$name</div>
+                <video autoplay muted src=$file></video>
+                <div>$date</div>
+            </div>";
         }
     }
     function echoPost($post, $author_data){
@@ -228,15 +224,14 @@
                 if(sizeof($posts) > $limit){
                     echo '<div class="pagination">';
                     if($page_id != 1){
-                        echo '<a href="?pageid=1&limit='.$limit.'">&lt;</a>';
-                        echo '<a href="?pageid='.($page_id-1).'&limit='.$limit.'">'.($page_id-1).'</a>';
+                        echo "<a href=?pageid=1&limit=$limit>&lt;</a>";
+                        echo "<a href=?pageid=".($page_id-1)."&limit=$limit>".($page_id-1)."</a>";
                     }
-                    echo '<a href="#" class="active">'.$page_id.'</a>';
+                    echo "<a href='#' class='active'>$page_id</a>";
                     $temp = ((sizeof($posts)/$limit) - (int)(sizeof($posts)/$limit))*$limit;
-                    // var_dump();
                     if($page_id <= $temp){
-                        echo '<a href="?pageid='.($page_id+1).'&limit='.$limit.'">'.($page_id+1).'</a>';
-                        echo '<a href="?pageid='.$temp.'&limit='.$limit.'">&gt;</a>';
+                        echo '<a href="?pageid='.($page_id+1)."&limit=$limit>".($page_id+1).'</a>';
+                        echo "<a href=?pageid=$temp&limit=$limit>&gt;</a>";
                     }
                     echo '</div>';
                 }
@@ -257,4 +252,3 @@
         }); 
     });
 </script>
-<?php } ?>

@@ -1,6 +1,6 @@
 <section class="main_users">
 <?php
-    $query = $mysql->query('SELECT id, background, pfp, name, brief FROM users');
+    $query = $pdo->query('SELECT id, background, pfp, name, brief FROM users');
     $users = $query->fetchAll();
     foreach ($users as $_ => $user) {
         ?>        

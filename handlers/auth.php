@@ -1,4 +1,6 @@
 <?php
+$page = new Page($url, $dir);
+
 if(!isset($_POST['name'])){
     include_once 'components/auth_form.html';
 }

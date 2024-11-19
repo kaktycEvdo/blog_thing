@@ -1,7 +1,7 @@
 <?php
     $hidden = 0;
     if(isset($_SESSION['left_user_id']) && $_SESSION['left_user_id'] != ''){
-        $luser_data = $mysql->query('SELECT name, background, pfp, description, brief FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
+        $luser_data = $this->pdo->query('SELECT name, background, pfp, description, brief FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
 ?>
         <section id="left-panel">
             <div class="profile_left">

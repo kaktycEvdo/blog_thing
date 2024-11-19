@@ -6,14 +6,14 @@
         <!-- use space-between
         (left and right links) -->
         <div>
-            <a href="<?php echo $dir; ?>">Главная</a>
+            <a href="<?php echo $this->dir; ?>">Главная</a>
             <input id="dropdown" type="checkbox" hidden>
             <label for="dropdown">
                 Статьи
                 <div id="custom_pages">
                     <?php
                     if(isset($_SESSION['user_id'])){
-                        $stmt = $mysql->query('SELECT id, header FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
+                        $stmt = $this->pdo->query('SELECT id, header FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
                         $pins = $stmt->fetchAll();
                         if($pins){
                             foreach ($pins as $pin) {
