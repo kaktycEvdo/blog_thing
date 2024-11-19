@@ -5,14 +5,72 @@ if(!isset($_GET['id'])){
 else{
     require_once 'utility_functions.php';
 
+    /**
+     * A comment object
+     * @param array<string> $comment Assoc array of comment values.
+     * @param PDO $pdo Current PDO object.
+     * @param int $blog_id ID of blog that has the comments.
+     */
+    class Comment{
+        private $author;
+        private $responses;
+        private $blog_id;
+        protected $comment;
+        
+        public function __construct(array $comment, PDO $pdo, int $blog_id) {
+            $this->comment = $comment;
+
+            $stmt = $pdo->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
+            $stmt->bindParam('id', $comment['author']);
+            $stmt->execute();
+            $author = $stmt->fetch();
+
+            $this->author = $author;
+            $this->responses = $pdo->query('SELECT * FROM comment WHERE response = '.$comment['id'])->fetchAll();
+        }
+
+        /**
+         * @return void Displays the comment in formatted manner.
+         */
+        public function display(){
+            $time = $this->comment['publish_date'];
+            $datetime1 = date_create($time);
+            $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
+            $interval = date_diff($datetime1, $datetime2);
+            $display_time = formatDisplayTime($interval);
+    
+            $pfp = $this->author['pfp'] != '' ? 'static/user/'.$this->author['name'].'/'.$this->author['pfp'] : 'static/user-default.png';
+
+            echo '<div class="comment">
+            <div class="author_data">
+            <div class="author_pfp"><img src="'.$pfp.'"></div>
+            <div class="author_name">
+            <a href="blogpage?user='.$this->author['id'].'">'.$this->author['name'].'</a>
+            <p>'.$display_time.'</p>
+            </div>
+            </div>
+            <div class="comment_data">
+            <div class="comment_text">'.$this->comment['text'].'</div>
+            </div>
+            <a class="accenttext respond" id="r'.$this->comment['id'].'">ответить</a>
+            <form id="f'.$this->comment['id'].'" class="respond_form hidden" action="comment?response='.$this->comment['id'].'&blog_id='.$this->blog_id.'" method="POST">
+            <input type="text" placeholder="Текст ответа" name="text">
+            <div>
+            <input type="submit" value="Ответить">
+            <button id="c'.$this->comment['id'].'" class="other-button respond_cancel">Отмена</button>
+            </div>
+            </form>';
+        }
+    }
+
     $blog_id = $_GET['id'];
-    $blogQ = $mysql->prepare('SELECT * FROM posts WHERE id = :id');
+    $blogQ = $pdo->prepare('SELECT * FROM posts WHERE id = :id');
     $blogQ->bindParam('id', $blog_id);
 
     $blogQ->execute();
     $blog = $blogQ->fetch();
 
-    $authorDataQ = $mysql->prepare('SELECT name, pfp FROM users WHERE id = :id');
+    $authorDataQ = $pdo->prepare('SELECT name, pfp FROM users WHERE id = :id');
     $authorDataQ->bindParam('id', $blog['author']);
     $authorDataQ->execute();
     $author_data = $authorDataQ->fetch();
@@ -89,7 +147,7 @@ else{
             <hr>
             <?php
             if($blog['comment_ability'] == 1){
-                $getCommentsQ = $mysql->prepare('SELECT * FROM comment WHERE post = :id and response IS NULL');
+                $getCommentsQ = $pdo->prepare('SELECT id FROM comment WHERE post = :id');
                 $getCommentsQ->bindParam('id', $blog_id);
                 $getCommentsQ->execute();
 
@@ -100,74 +158,12 @@ else{
                     echo '<div class="no_comments">Нет комментариев под постом :(</div>';
                 }
                 else{
-                    foreach($comments as $comment){
-                        $stmt = $mysql->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
-                        $stmt->bindParam('id', $comment['author']);
-                        $stmt->execute();
-                        $author = $stmt->fetch();
+                    foreach($comments as $comment_data){
+                        $comment = new Comment($comment_data, $pdo, $blog_id);
 
-                        $time = $comment['publish_date'];
-                        $datetime1 = date_create($time);
-                        $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
-                        $interval = date_diff($datetime1, $datetime2);
-                        $display_time = formatDisplayTime($interval);
+                        // comment => comment => comment
 
-                        echo '<div class="comment">
-                        <div class="author_data">
-                        <div class="author_pfp"><img src="static/user/'.$author['name'].'/'.$author['pfp'].'"></div>
-                        <div class="author_name">
-                        <a href="blogpage?user='.$author['id'].'">'.$author['name'].'</a>
-                        <p>'.$display_time.'</p>
-                        </div>
-                        </div>
-                        <div class="comment_data">
-                        <div class="comment_text">'.$comment['text'].'</div>
-                        </div>
-                        <a class="accenttext respond" id="r'.$comment['id'].'">ответить</a>
-                        <form id="f'.$comment['id'].'" class="respond_form hidden" action="comment?response='.$comment['id'].'&blog_id='.$blog_id.'" method="POST">
-                        <input type="text" placeholder="Текст ответа" name="text">
-                        <div>
-                        <input type="submit" value="Ответить">
-                        <button id="c'.$comment['id'].'" class="other-button respond_cancel">Отмена</button>
-                        </div>
-                        </form>
-                        </div>';
-                        $responses = $mysql->query('SELECT * FROM comment WHERE response = '.$comment['id'])->fetchAll();
-                        if($responses){
-                            foreach ($responses as $response) {
-                                $stmt = $mysql->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
-                                $stmt->bindParam('id', $response['author']);
-                                $stmt->execute();
-                                $author = $stmt->fetch();
-        
-                                $time = $response['publish_date'];
-                                $datetime1 = date_create($time);
-                                $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
-                                $interval = date_diff($datetime1, $datetime2);
-                                $display_time = formatDisplayTime($interval);
-
-                                echo '<div class="response_comment"><div class="comment">
-                                <div class="author_data">
-                                <div class="author_pfp"><img src="static/user/'.$author['name'].'/'.$author['pfp'].'"></div>
-                                <div class="author_name">
-                                <a href="blogpage?user='.$author['id'].'">'.$author['name'].'</a>
-                                <p>'.$display_time.'</p>
-                                </div>
-                                </div>
-                                <div class="comment_data">
-                                <div class="comment_text">'.$response['text'].'</div>
-                                </div>
-                                <a class="accenttext respond" id="r'.$response['id'].'">ответить</a>
-                                <form id="f'.$response['id'].'" class="respond_form hidden" action="comment?response='.$response['id'].'&blog_id='.$blog_id.'" method="POST">
-                                <input type="text" placeholder="Текст ответа" name="text">
-                                <div>
-                                <input type="submit" value="Ответить">
-                                <button id="c'.$response['id'].'" class="other-button respond_cancel">Отмена</button>
-                                </div>
-                                </form>
-                                </div></div>';
-                            }
-                        }
+                        $comment->display();
                     }
                 }
                 echo '</div>';
