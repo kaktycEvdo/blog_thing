@@ -19,7 +19,13 @@ else{
             header('Location: profile');
             die;
         }
-        $qChangePassword->bindParam('password', hash('sha256', $_POST['newPassword']));
+        if($_POST['newPassword'] != ''){
+            $_SESSION['response'] = [1, 'Ошибка: Пароль не может быть пустой строкой'];
+            header('Location: profile');
+            die;
+        }
+        $password = hash('sha256', $_POST['newPassword']);
+        $qChangePassword->bindParam('password', $password);
         if($qChangePassword->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
     }
 
