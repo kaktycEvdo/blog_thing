@@ -1,7 +1,6 @@
 <?php
     session_start();
     require 'connect_to_db.php';
-    require_once 'profile_info.php';
 
     $dir = '/blog-project';
     $url = explode('?', $_SERVER['REQUEST_URI'])[0];
@@ -40,16 +39,66 @@
         }
     }
     /**
-     * Displays server response modal
-     * @return void Echoes the modal.
+     * Modal class for server response throws.
+     * @param bool $type
+     * @param string $message
+     * @param bool $thrown
      */
-    function displayServerModal(){
-        if(isset($_SESSION['response'])){
-            $res = $_SESSION['response'];
-            echo '<div class="modal '.($res[0] ? "merror" : "msuccess").'">'.$res[1].'</div>';
-            $_SESSION['response'] = null;
+    class ServerModal{
+        private $message; // Message of the modal. Best to keep under 100 characters.
+        private $type; // Type of modal. 1 - error, 0 - success.
+        public $thrown; // An "if-thrown" parameter. Changes with functions.
+
+        public function __construct() {
+            $this->thrown = false;
+        }
+
+        private function changeMessage(string $message){
+            $this->message = $message;
+        }
+        private function changeType(string $type){
+            $this->type = $type;
+        }
+
+        public function changeModal(string $message, bool $error = false){
+            $this->changeMessage($message);
+            $this->changeType($error);
+        }
+        public function closeModal(){
+            $this->thrown = false;
+        }
+        public function throwModal(string $location = null){
+            $this->thrown = true;
+            // there's no live timer in php.
+            
+            switch($this->type){
+                case 0:
+                    echo "<div class='modal msuccess'>$this->message</div>";
+                    break;
+                case 1:
+                    echo "<div class='modal merror'>$this->message</div>";
+                    break;
+            }
+            if($location){
+                header("Location: $location");
+            }
         }
     }
+
+    $modal;
+    if(isset($_SESSION['response']) && $_SESSION['response'] != null){
+        $modal = unserialize($_SESSION['response']);
+        if($modal->thrown){
+            $modal->throwModal();
+        }
+    }
+    else{
+        $modal = new ServerModal;
+        $_SESSION['response'] = serialize($modal);
+    }
+    
+    // require_once 'profile_info.php';
+    require_once 'models.php';
 
     switch ($url){
         case '/':

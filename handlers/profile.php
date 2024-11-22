@@ -5,13 +5,7 @@ if(!isset($_POST['name'])){
 else{
     require 'checking_module.php';
     // check the data AND do the thing
-    $qChangeName = $mysql->prepare('UPDATE users SET name = :name WHERE id = '.$_SESSION['user_id']);
-    $qChangeEmail = $mysql->prepare('UPDATE users SET email = :email WHERE id = '.$_SESSION['user_id']);
-    $qChangePassword = $mysql->prepare('UPDATE users SET password = :password WHERE id = '.$_SESSION['user_id']);
-    $qChangePFP = $mysql->prepare('UPDATE users SET pfp = :pfp WHERE id = '.$_SESSION['user_id']);
-    $qChangeBG = $mysql->prepare('UPDATE users SET background = :bg WHERE id = '.$_SESSION['user_id']);
-    $qChangeBrief = $mysql->prepare('UPDATE users SET brief = :brief WHERE id = '.$_SESSION['user_id']);
-    $qChangeDescription = $mysql->prepare('UPDATE users SET description = :desc WHERE id = '.$_SESSION['user_id']);
+    
 
     if(isset($_POST['newPassword']) && isset($_POST['repeatPassword'])){
         if($_POST['newPassword'] != $_POST['repeatPassword']){

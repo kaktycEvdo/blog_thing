@@ -1,50 +1,27 @@
 <?php
-$page = new Page($url, $dir);
+class AuthPage extends Page{
+    public $page;
 
-if(!isset($_POST['name'])){
-    include_once 'components/auth_form.html';
+    function displayContent(){
+        $pdo = $this->pdo;
+        require_once 'view/components/auth_form.html';
+    }
 }
-else{
+$cur_page = new AuthPage($pdo, $dir);
+
+if(isset($_POST['name'])){
     // check the data
     if(!isset($_POST['name']) || !isset($_POST['password'])){
-        echo 'fields were empty';
+        $modal->changeModal('Ошибка: пустые поля при авторизации', true);
+        $modal->throwModal();
         die;
     }
-
-    // do the thing
-    $query = $mysql->prepare('SELECT id FROM users WHERE name = :name and password = :password');
-    $queryEmail = $mysql->prepare('SELECT id FROM users WHERE email = :name and password = :password');
-
+    
     $name = $_POST['name'];
     $password = hash('sha256', $_POST['password']);
 
-    if (str_contains($name, '@')){
-        $queryEmail->bindParam('name', $name);
-        $queryEmail->bindParam('password', $password);
-        $queryEmail->execute();
-    }
-    else{
-        $query->bindParam('name', $name);
-        $query->bindParam('password', $password);
-        $query->execute();
-    }
+    // do the thing
+    $user = unserialize($_SESSION['user']);
 
-    $idwn = $query->fetch(PDO::FETCH_COLUMN);
-    $idwe = $queryEmail->fetch(PDO::FETCH_COLUMN);
-
-    if($idwn){
-        $_SESSION['user_id'] = $idwn;
-        $_SESSION['left_user_id'] = $idwn;
-    }
-    else if ($idwe){
-        $_SESSION['user_id'] = $idwe;
-        $_SESSION['left_user_id'] = $idwe;
-    }
-    else{
-        $_SESSION['response'] = [1, 'Ошибка авторизации: неверные данные'];
-        header('Location: auth');
-        die;
-    }
-
-    header('Location: profile');
+    $user->authorize();
 }
