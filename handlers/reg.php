@@ -1,68 +1,57 @@
 <?php
-if(!isset($_POST['name'])){
-    include_once 'components/reg_form.html';
+class RegPage extends Page{
+    public $page;
+
+    function displayContent(){
+        require_once 'view/components/reg_form.html';
+    }
 }
-else{
+$cur_page = new RegPage($pdo, $dir);
+
+if(isset($_POST['name'])){
     require_once 'checking_module.php';
     // check the data
-    if(!isset($_POST['name']) || !isset($_POST['password']) || !isset($_POST['email'])){
-        $_SESSION['response'] = [1, 'Ошибка: Пустые поля'];
-        header('Location: reg');
+    $modal = new ServerModal;
+    if((!isset($_POST['name']) || $_POST['name'] == '')
+    || (!isset($_POST['password']) || $_POST['password'] == '')
+    || (!isset($_POST['email']) || $_POST['email'] == '')){
+        $modal->throwModal('Ошибка: пустые поля при регистрации', true, 'reg');
         die;
     }
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-
     $res = validateName($name);
     if($res[0] == 1){
-        $_SESSION['response'] = $res;
-        header('Location: reg');
+        $modal->throwModal($res[1], $res[0], 'reg');
         die;
     }
     $res = validateEmail($email);
     if($res[0] == 1){
-        $_SESSION['response'] = $res;
-        header('Location: reg');
+        $modal->throwModal($res[1], $res[0], 'reg');
         die;
     }
-
-    $to = '';
-
-    if(!isset($_FILES['pfp']) || $_FILES['pfp'] == 'default' || $_FILES['pfp']['name'] == ''){
-        $to = 'static/user-default.png';
-    } else {
-        $to = 'static/user/'.$_POST['name'].'/'.$_FILES['pfp']['name'];
-        if(!is_dir('static/user/'.$user_data['name'])){
-            mkdir('static/user/'.$user_data['name']);
-        }
-        $img = $_FILES['pfp'];
     
-        $imgVal = validateMedia($img, $to);
+    $name = $_POST['name'];
+    $password = hash('sha256', $_POST['password']);
+    $pfp = $_FILES['pfp'];
+    
+    if(!isset($pfp) || $pfp == 'default' || $pfp['name'] == ''){
+        $to = 'static/user-default.png';
+        $pfp = null;
+    } else {
+        $to = "static/user/$name/".$pfp['name'];
+        if(!is_dir("static/user/$name")){
+            mkdir("static/user/$name");
+        }
+
+        $imgVal = validateMedia($pfp, $to);
 
         if($imgVal[0] == 1){
-            $_SESSION['response'] = $imgVal;
-            header('Location: reg');
+            $modal->throwModal($imgVal[1], $imgVal[0], 'reg');
             die;
         }
     }
 
     // do the thing
-
-    $query = $mysql->prepare('INSERT INTO users(name, email, password, pfp) VALUES (:name, :email, :password, :pfp)');
-    $query->bindValue('name', $_POST['name']);
-    $query->bindValue('email', $_POST['email']);
-    $query->bindValue('password', hash('sha256', $_POST['password']));
-    $query->bindValue('pfp', $_FILES['pfp']);
-
-    if(!$query->execute()){
-        echo 'Ошибка создания пользователя';
-        die;
-    }
-
-    $id = $mysql->query('SELECT id FROM users ORDER BY id DESC LIMIT 1')->fetch(PDO::FETCH_COLUMN);
-
-    $_SESSION['user_id'] = $id;
-    $_SESSION['left_user_id'] = $id;
-    header('Location: profile');
+    $user = new User($name, $name, $password, $pdo, $pfp['name']);
+    $user->register($pdo);
 }

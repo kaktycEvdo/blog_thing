@@ -8,8 +8,9 @@
 
     /**
      * Page class for displaying and handling things
-     * @param string $dir = '' Current directory. Leave empty if it's in hosting's root
-     * @var string $url Current url with slash. Index is '/' and main is '/main', for example.
+     * @property string $dir Current directory. Leave empty if it's in hosting's root. By default equals to empty string.
+     * @property string $url Current url with slash. Index is '/' and main is '/main', for example.
+     * @property PDO $pdo A PDO object for working with server.
      */
     class Page{
         protected $url;
@@ -40,14 +41,14 @@
     }
     /**
      * Modal class for server response throws.
-     * @param bool $type
-     * @param string $message
-     * @param bool $thrown
+     * @property bool $type Type of modal. 1 - error, 0 - success.
+     * @property string $message Message of the modal. Best to keep under 100 characters.
+     * @property-read bool $thrown An "if-thrown" parameter. Changes with functions.
      */
     class ServerModal{
-        private $message; // Message of the modal. Best to keep under 100 characters.
-        private $type; // Type of modal. 1 - error, 0 - success.
-        public $thrown; // An "if-thrown" parameter. Changes with functions.
+        private $message;
+        private $type;
+        public $thrown;
 
         public function __construct() {
             $this->thrown = false;
@@ -67,37 +68,37 @@
         public function closeModal(){
             $this->thrown = false;
         }
-        public function throwModal(string $location = null){
+        public function throwModal(string $message, bool $error = false, string $location = null){
+            $this->changeModal($message, $error);
             $this->thrown = true;
-            // there's no live timer in php.
-            
-            switch($this->type){
-                case 0:
-                    echo "<div class='modal msuccess'>$this->message</div>";
-                    break;
-                case 1:
-                    echo "<div class='modal merror'>$this->message</div>";
-                    break;
-            }
+            $modal = $this;
+            $_SESSION['response'] = serialize($modal);
             if($location){
                 header("Location: $location");
             }
         }
+        public function printMessage(){
+            switch($this->type){
+                case false:
+                    echo "<div class='modal msuccess'>$this->message</div>";
+                    break;
+                case true:
+                    echo "<div class='modal merror'>$this->message</div>";
+                    break;
+            }
+        }
     }
 
-    $modal;
+    $modal = null;
     if(isset($_SESSION['response']) && $_SESSION['response'] != null){
         $modal = unserialize($_SESSION['response']);
         if($modal->thrown){
-            $modal->throwModal();
+            $modal->printMessage();
+            $modal->closeModal();
         }
-    }
-    else{
-        $modal = new ServerModal;
         $_SESSION['response'] = serialize($modal);
     }
     
-    // require_once 'profile_info.php';
     require_once 'models.php';
 
     switch ($url){
@@ -107,29 +108,33 @@
             include_once 'handlers/main.php';
             break;
         case '/profile':
-            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != ''){
+            if(isset($_SESSION['user']) && $_SESSION['user'] != ''){
                 include_once 'handlers/profile.php';
-                $_SESSION['left_user_id'] = $_SESSION['user_id'];
+                $user = unserialize($_SESSION['user']);
+                $_SESSION['left_user'] = serialize($user);
             } else {
                 header('Location: auth');
             }
             break;
         case '/about':
-            if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != ''){
+            if(isset($_SESSION['user']) && $_SESSION['user'] != ''){
                 include_once 'handlers/blogpage.php';
-                $_SESSION['left_user_id'] = $_SESSION['user_id'];
+                $user = unserialize($_SESSION['user']);
+                $_SESSION['left_user'] = serialize($user);
             } else {
                 header('Location: auth');
             }
             break;
         case '/blogpage':
-            if(isset($_GET['user']) || isset($_SESSION['user_id'])){
+            if(isset($_GET['user']) || isset($_SESSION['user'])){
                 if(!isset($_GET['user'])){
-                    $_SESSION['left_user_id'] = $_SESSION['user_id'];
+                    $user = unserialize($_SESSION['user']);
+                    $_SESSION['left_user'] = serialize($user);
                     header('Location: about');
                 }
                 else{
-                    $_SESSION['left_user_id'] = $_GET['user'];
+                    $user = unserialize($_SESSION['user']);
+                    $_SESSION['left_user'] = serialize($user);
                     include_once 'handlers/blogpage.php';
                 }
             }

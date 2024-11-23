@@ -1,26 +1,32 @@
 <?php
-if(!isset($_POST['name'])){
-    include_once 'components/profile_form.php';
+class ProfilePage extends Page{
+    function displayContent(){
+        $pdo = $this->pdo;
+        $url = $this->url;
+        
+        $user = unserialize($_SESSION['user']);
+        $user_data = $user->getInfo();
+        include_once 'view/components/profile_form.php';
+    }
 }
-else{
+$cur_page = new ProfilePage($pdo, $dir);
+
+if(isset($_POST['name'])){
     require 'checking_module.php';
-    // check the data AND do the thing
-    
+    $modal = new ServerModal;
+    $user = unserialize($_SESSION['user']);
 
     if(isset($_POST['newPassword']) && isset($_POST['repeatPassword'])){
         if($_POST['newPassword'] != $_POST['repeatPassword']){
-            $_SESSION['response'] = [1, 'Ошибка: Пароли не совпадают'];
-            header('Location: profile');
+            $modal->throwModal('Ошибка: Пароли не совпадают', true, 'profile');
             die;
         }
         if($_POST['newPassword'] != ''){
-            $_SESSION['response'] = [1, 'Ошибка: Пароль не может быть пустой строкой'];
-            header('Location: profile');
+            $modal->throwModal('Ошибка: Пароль не может быть пустой строкой', true, 'profile');
             die;
         }
         $password = hash('sha256', $_POST['newPassword']);
-        $qChangePassword->bindParam('password', $password);
-        if($qChangePassword->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+        $user->changePassword($password);
     }
 
     if(isset($_POST['description']) && $_POST['description'] != $user_data['description']){

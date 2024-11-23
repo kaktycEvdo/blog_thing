@@ -12,4 +12,3 @@ class BlogPage extends Page{
     }
 }
 $cur_page = new BlogPage($pdo, $dir);
-?>

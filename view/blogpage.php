@@ -1,21 +1,21 @@
 <?php
-$authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
-        $id = 0;
-        if(isset($_GET['user'])){
-            $id = $_GET['user'];
-            $_SESSION['left_user_id'] = $_GET['user'];
-        }
-        else if (isset($_SESSION['left_user_id'])){
-            $id = $_SESSION['left_user_id'];
-        }
-        else{
-            header('Location: '.$dir);
-        }
-        $authorDataQ->bindParam('id', $id);
-        $authorDataQ->execute();
-        $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
-        $getPostsQ = $pdo->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
-        $getStoriesQ = $pdo->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
+    $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
+    $id = 0;
+    if(isset($_GET['user'])){
+        $id = $_GET['user'];
+        $_SESSION['left_user_id'] = $_GET['user'];
+    }
+    else if (isset($_SESSION['left_user_id'])){
+        $id = $_SESSION['left_user_id'];
+    }
+    else{
+        header('Location: '.$dir);
+    }
+    $authorDataQ->bindParam('id', $id);
+    $authorDataQ->execute();
+    $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
+    $getPostsQ = $pdo->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
+    $getStoriesQ = $pdo->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
         
     function echoStory($id, $name, $date, $src, $author_data){
         $file = 'static/user/'.$author_data['name'].'/stories/'.$src;
@@ -191,11 +191,11 @@ $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
     </div>
     <?php
         foreach ($stories as $id => $content) {
-            echo '<div id="story'.$id.'" class="modal modal_stories">
-                    <div class="modal_content">';
+            echo "<div id='story$id' class='modal modal_stories'>
+                    <div class='modal_content'>";
             include 'view/modal/story.php';
-            echo '</div>
-                </div>';
+            echo "</div>
+                </div>";
         }
     ?>
     <section id="do_limit">
@@ -203,7 +203,6 @@ $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
             <h2>Задать лимит постов:</h2>
         </div>
         <div>
-        <!-- переделать позже -->
             <a href="?limit=1&pageid=1">1</a>
             <a href="?limit=2&pageid=1">2</a>
             <a href="?limit=4&pageid=1">4</a>
@@ -230,7 +229,7 @@ $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
                     echo "<a href='#' class='active'>$page_id</a>";
                     $temp = ((sizeof($posts)/$limit) - (int)(sizeof($posts)/$limit))*$limit;
                     if($page_id <= $temp){
-                        echo '<a href="?pageid='.($page_id+1)."&limit=$limit>".($page_id+1).'</a>';
+                        echo '<a href="?pageid='.($page_id+1)."&limit=$limit\">".($page_id+1).'</a>';
                         echo "<a href=?pageid=$temp&limit=$limit>&gt;</a>";
                     }
                     echo '</div>';
@@ -240,12 +239,15 @@ $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
 </div>
 <script>
     let section = document.querySelector("#input_new");
-    let stories = document.querySelectorAll('#stories > div');
+    let stories = document.querySelectorAll("#stories > div");
 
     let modal = document.querySelector("#new_post");
     let modal_stories = document.querySelectorAll(".modal_stories");
 
-    section.addEventListener('click', () => openModal(modal));
+    if(section){
+        section.addEventListener('click', () => openModal(modal));
+    }
+
     stories.forEach(story => {
         story.addEventListener('click', (e) => {
             openModal(modal_stories[e.currentTarget.id]);
