@@ -1,24 +1,9 @@
 <?php
-    $authorDataQ = $pdo->prepare('SELECT name FROM users WHERE id = :id');
-    $id = 0;
-    if(isset($_GET['user'])){
-        $id = $_GET['user'];
-        $_SESSION['left_user_id'] = $_GET['user'];
-    }
-    else if (isset($_SESSION['left_user_id'])){
-        $id = $_SESSION['left_user_id'];
-    }
-    else{
-        header('Location: '.$dir);
-    }
-    $authorDataQ->bindParam('id', $id);
-    $authorDataQ->execute();
-    $author_data = $authorDataQ->fetch(PDO::FETCH_ASSOC);
-    $getPostsQ = $pdo->query('SELECT * FROM posts WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
-    $getStoriesQ = $pdo->query('SELECT * FROM stories WHERE author = '.$id.' ORDER BY id DESC', PDO::FETCH_ASSOC);
+    $getPostsQ = $pdo->query("SELECT * FROM posts WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
+    $getStoriesQ = $pdo->query("SELECT * FROM stories WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
         
-    function echoStory($id, $name, $date, $src, $author_data){
-        $file = 'static/user/'.$author_data['name'].'/stories/'.$src;
+    function echoStory($id, $name, $date, $src, $luser){
+        $file = "static/user/$luser->name/stories/$src";
         $date = date('d.m.Y', strtotime($date));
         if(preg_match('/image\//', mime_content_type($file))){
             echo "<div id=$id>
@@ -35,9 +20,9 @@
             </div>";
         }
     }
-    function echoPost($post, $author_data){
+    function echoPost($post, $luser){
         $post['last_change_date'] = date('d.m.Y', strtotime($post['last_change_date']));
-        $file = "static/user/".$author_data['name']."/post_media/".$post['media'];
+        $file = "static/user/$luser->name/post_media/".$post['media'];
         if(preg_match('/image\//', mime_content_type($file))){
             echo '<div class="text_post with_cover"><a href="pin_post?id='.$post['id'].'"'.($post['pinned'] == 1 ? ' class="pinned"' : null).'>
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="32" height="32" viewBox="0 0 256 256" xml:space="preserve">
@@ -122,7 +107,7 @@
         if($stories){
             echo '<section id="stories">';
             foreach ($stories as $id => $story) {
-                echoStory($id, $story['name'], $story['publish_date'], $story['media'], $author_data);
+                echoStory($id, $story['name'], $story['publish_date'], $story['media'], $luser);
             }
             echo '</section>';
         }
@@ -215,7 +200,7 @@
             <?php
                 for($i = ($page_id-1)*$limit; $i < $page_id*$limit; $i++){
                     if(!isset($posts[$i])) break;
-                    echoPost($posts[$i], $author_data);
+                    echoPost($posts[$i], $luser);
                 }
             ?>
         </div>

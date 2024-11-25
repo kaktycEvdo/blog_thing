@@ -38,6 +38,9 @@
             include_once 'view/components/leftpanel.php';
             echo '</main>';
         }
+        protected function redirect($location){
+            header("Location: $location");
+        }
     }
     /**
      * Modal class for server response throws.
@@ -101,71 +104,26 @@
     
     require_once 'models.php';
 
-    switch ($url){
-        case '/':
-        case '/index':
-        case '/main':
-            include_once 'handlers/main.php';
-            break;
-        case '/profile':
-            if(isset($_SESSION['user']) && $_SESSION['user'] != ''){
-                include_once 'handlers/profile.php';
-                $user = unserialize($_SESSION['user']);
-                $_SESSION['left_user'] = serialize($user);
-            } else {
-                header('Location: auth');
-            }
-            break;
-        case '/about':
-            if(isset($_SESSION['user']) && $_SESSION['user'] != ''){
-                include_once 'handlers/blogpage.php';
-                $user = unserialize($_SESSION['user']);
-                $_SESSION['left_user'] = serialize($user);
-            } else {
-                header('Location: auth');
-            }
-            break;
-        case '/blogpage':
-            if(isset($_GET['user']) || isset($_SESSION['user'])){
-                if(!isset($_GET['user'])){
-                    $user = unserialize($_SESSION['user']);
-                    $_SESSION['left_user'] = serialize($user);
-                    header('Location: about');
-                }
-                else{
-                    $user = unserialize($_SESSION['user']);
-                    $_SESSION['left_user'] = serialize($user);
-                    include_once 'handlers/blogpage.php';
-                }
-            }
-            else{
-                header('Location: ../'.$dir);
-            }
-            break;
-        case '/blog':
-            include_once 'handlers/blog.php';
-            break;
-        case '/reg':
-            include_once 'handlers/reg.php';
-            break;
-        case '/auth':
-            include_once 'handlers/auth.php';
-            break;
-        case '/create_post':
-            include_once 'create_post.php';
-            break;
-        case '/pin_post':
-            include_once 'pin_post.php';
-            break;
-        case '/comment':
-            include_once 'comment.php';
-            break;
-        case '/works':
-            include_once 'handlers/works.php';
-            break;
-        default:
-            include_once 'handlers/404.html';
-            break;
+    // remake the architecture so this is automatic
+    $pages_names = [
+        '/',
+        '/profile',
+        '/blogpage',
+        '/about',
+        '/blog',
+        '/reg',
+        '/auth',
+        '/create_post',
+        '/pin_post',
+        '/comment',
+        '/works'
+    ];
+
+    if(array_search($url, $pages_names, true)){
+        include_once "handlers$url.php";
+    }
+    else{
+        include_once "view/404.html";
     }
 ?>
 <!DOCTYPE html>

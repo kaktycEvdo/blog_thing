@@ -1,21 +1,21 @@
 <?php
     $hidden = 0;
-    if(isset($_SESSION['left_user_id']) && $_SESSION['left_user_id'] != ''){
-        $luser_data = $this->pdo->query('SELECT name, background, pfp, description, brief FROM users WHERE id = '.$_SESSION['left_user_id'])->fetch(PDO::FETCH_ASSOC);
+    if(isset($_SESSION['left_user']) && $_SESSION['left_user'] != ''){
+        $luser = unserialize($_SESSION['left_user']);
 ?>
         <section id="left-panel">
             <div class="profile_left">
                 <div class="profile_media">
                     <div class="background">
-                        <?php echo $luser_data['background'] != '' ? '<img src="static/user/'.$luser_data['name'].'/'.$luser_data['background'].'" alt="profile background"/>' : ''; ?>
+                        <?php echo $luser->background != '' ? "<img src='static/user/$luser->name/$luser->background' alt='profile background'/>" : ''; ?>
                     </div>
                     <div class="pfp">
-                        <?php echo $luser_data['pfp'] != '' && $luser_data['pfp'] != 'user-default.png' ? '<img src="static/user/'.$luser_data['name'].'/'.$luser_data['pfp'].'" alt="PFP">' : '<img src="static/user-default.png" alt="PFP">'; ?>
+                        <?php echo $luser->pfp != '' && $luser->pfp != 'user-default.png' ? "<img src='static/user/$luser->name/$luser->pfp' alt='profile picture'/>" : '<img src="static/user-default.png" alt="PFP">'; ?>
                     </div>
                 </div>
                 <div class="brief">
-                    <p><?php echo $luser_data['name'] ?></p>
-                    <p><?php echo $luser_data['brief'] ?></p>
+                    <p><?php echo $luser->name ?></p>
+                    <p><?php echo $luser->brief ?></p>
                     <div class="contacts">
                         <a href="custom link"><img src="" alt="Twitter link"></a>
                         <a href="custom link"><img src="" alt="VK link"></a>
@@ -24,11 +24,11 @@
                 </div>
                 <hr>
                 <div class="big_desc">
-                    <?php echo $luser_data['description'] ?>
+                    <?php echo $luser->description ?>
                 </div>
                 <hr>
                 <div class="profile_left_buttons">
-                    <a href="works?user=<?php echo $_SESSION['left_user_id']; ?>" class="generic-button other-button">Мои работы</a>
+                    <a href="works?user=<?php echo $luser->id; ?>" class="generic-button other-button">Мои работы</a>
                     <a href="#" class="generic-button" id="contact_button">Написать мне</a>
                 </div>
             </div>
