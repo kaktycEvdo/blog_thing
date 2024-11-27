@@ -2,14 +2,16 @@
     session_start();
     require 'connect_to_db.php';
 
-    $dir = '/blog-project';
     $url = explode('?', $_SERVER['REQUEST_URI'])[0];
+    $dir = '/'.explode('/', $url)[1];
     $url = str_replace($dir, '',  $url);
+
+    // maybe change to something else later cause it's really unoptimised
+    $_SESSION['dir'] = $dir;
+    $_SESSION['url'] = $url;
 
     /**
      * Page class for displaying and handling things
-     * @property string $dir Current directory. Leave empty if it's in hosting's root. By default equals to empty string.
-     * @property string $url Current url with slash. Index is '/' and main is '/main', for example.
      * @property PDO $pdo A PDO object for working with server.
      */
     class Page{
@@ -17,13 +19,10 @@
         protected $pdo;
         protected $dir;
 
-        public function __construct(PDO $pdo, string $dir = '', string $url = '') {
+        public function __construct(PDO $pdo) {
             $this->pdo = $pdo;
-            $this->dir = $dir;
-            if($url == ''){
-                $url = explode('?', str_replace($dir, '',  $_SERVER['REQUEST_URI'])[0]);
-            }
-            $this->url = $url;
+            $this->dir = $_SESSION['dir'];
+            $this->url = $_SESSION['url'];
         }
         private function displayHeader(){
             include_once 'view/components/header.php';
@@ -119,8 +118,18 @@
         '/works'
     ];
 
-    if(array_search($url, $pages_names, true)){
-        include_once "handlers$url.php";
+    if(array_search($url, $pages_names, true) !== false){
+        switch ($url){
+            case '/':
+                include_once 'handlers/main.php';
+                break;
+            case '/about':
+                include_once 'handlers/blogpage.php';
+                break;
+            default:
+                include_once "handlers$url.php";
+                break;
+        }
     }
     else{
         include_once "view/404.html";

@@ -1,6 +1,11 @@
 <?php
 require_once 'utility_functions.php';
 
+/**
+ * Blog class for easier printing on page
+ * @property int $type Type of the blog. Inserted automatically. 1 - normal, 2 - video promo.
+ * ...
+ */
 class Blog{
     private $pinned;
     protected $blog_id;
@@ -12,6 +17,7 @@ class Blog{
     public $tags;
     public $comment_ability;
     public $last_change_date;
+    private $type;
 
     public function __construct(int $id, PDO $pdo) {
         $this->blog_id = $id;
@@ -22,7 +28,28 @@ class Blog{
         $stmt->execute();
         $blog = $stmt->fetch(PDO::FETCH_OBJ);
 
-        var_dump($blog);
+        $stmt = $pdo->prepare("SELECT users.id as id, users.name as name FROM posts, users WHERE author = users.id AND author = $blog->author");
+        $stmt->execute();
+        $this->author = $stmt->fetch(PDO::FETCH_OBJ);
+
+        $this->media = $blog->media;
+        $this->content = $blog->content;
+        $this->comment_ability = $blog->comment_ability;
+        $this->last_change_date = $blog->last_change_date;
+        $this->header = $blog->header;
+        $this->tags = $blog->tags;
+
+        $this->type = 1;
+
+        $this->media = "static/user/".$this->author->name."/post_media/$blog->media";
+
+        if(preg_match('/image\//', mime_content_type($this->media))){
+
+        }
+    }
+
+    public function printout(){
+
     }
 }
 
@@ -32,31 +59,34 @@ class Blog{
  * @property PDO $pdo Current PDO object.
  * @property int $blog_id ID of blog that has the comments.
  */
-class Comment extends Blog{
+class Comment{
     private $responses;
+    private $blog_id;
     private $id;
     public $text;
     public $publish_date;
     public $author;
+    private $pdo;
     
-    public function __construct(int $id) {
-        $stmt = $this->pdo->query("SELECT id, publish_date, text, author FROM comment WHERE id = :id AND blog_id = :bid")->fetch();
-        $stmt->bindParam('id', $id);
-        $stmt->bindParam('bid', $this->blog_id);
-        $stmt->execute();
-        $comment = $stmt->fetch();
+    public function __construct(int $id, int $blog_id, PDO $pdo) {
+        $this->pdo = $pdo;
 
-        $this->text = $comment['text'];
-        $this->publish_date = $comment['publish_date'];
+        $stmt = $this->pdo->prepare("SELECT * FROM comment WHERE id = :id AND post = :bid");
+        $stmt->bindParam('id', $id);
+        $stmt->bindParam('bid', $blog_id);
+        $stmt->execute();
+        $this->comment = $stmt->fetch();
+
+        $this->text = $this->comment['text'];
+        $this->publish_date = $this->comment['publish_date'];
 
         // comment author should be got by other means than class/session
         $stmt = $this->pdo->prepare('SELECT id, name, pfp FROM users WHERE id = :id');
-        $stmt->bindParam('id', $comment['author']);
+        $stmt->bindParam('id', $this->comment['author']);
         $stmt->execute();
-        $author = $stmt->fetch();
+        $this->author = $stmt->fetch(PDO::FETCH_OBJ);
 
-        $this->author = $author;
-        $this->responses = $this->pdo->query('SELECT * FROM comment WHERE response = '.$comment['id'])->fetchAll();
+        $this->responses = $this->pdo->query('SELECT * FROM comment WHERE response = '.$this->comment['id'])->fetchAll();
     }
 
     /**
@@ -69,13 +99,13 @@ class Comment extends Blog{
         $interval = date_diff($datetime1, $datetime2);
         $display_time = formatDisplayTime($interval);
 
-        $pfp = $this->author['pfp'] != '' ? 'static/user/'.$this->author['name'].'/'.$this->author['pfp'] : 'static/user-default.png';
+        $pfp = $this->author->pfp != '' ? 'static/user/'.$this->author->name.'/'.$this->author->pfp : 'static/user-default.png';
 
         echo '<div class="comment">
         <div class="author_data">
         <div class="author_pfp"><img src="'.$pfp.'"></div>
         <div class="author_name">
-        <a href="blogpage?user='.$this->author['id'].'">'.$this->author['name'].'</a>
+        <a href="blogpage?user='.$this->author->id.'">'.$this->author->name.'</a>
         <p>'.$display_time.'</p>
         </div>
         </div>
@@ -97,7 +127,7 @@ $blog_id = $_GET['id'];
 $blog = new Blog($blog_id, $pdo);
 
 $authorDataQ = $pdo->prepare('SELECT name, pfp FROM users WHERE id = :id');
-$authorDataQ->bindParam('id', $blog->author);
+$authorDataQ->bindParam('id', $blog->author->id);
 $authorDataQ->execute();
 $author_data = $authorDataQ->fetch();
 
@@ -177,13 +207,13 @@ if($blog->media != null){
 
         $comments = $getCommentsQ->fetchAll();
 
-        echo '<div class="comment_section"><h3>Обсуждение</h3><form method="POST" action="comment?blog_id='.$blog->id.'"><input type="text" placeholder="Текст комментария" name="text" id="text"><input type="submit" value="Отправить"></form>';
+        echo '<div class="comment_section"><h3>Обсуждение</h3><form method="POST" action="comment?blog_id='.$blog_id.'"><input type="text" placeholder="Текст комментария" name="text" id="text"><input type="submit" value="Отправить"></form>';
         if(!$comments || sizeof($comments) == 0){
             echo '<div class="no_comments">Нет комментариев под постом :(</div>';
         }
         else{
             foreach($comments as $comment_data){
-                $comment = new Comment($comment_data);
+                $comment = new Comment($comment_data['id'], $blog_id, $pdo);
 
                 // comment => comment => comment
 

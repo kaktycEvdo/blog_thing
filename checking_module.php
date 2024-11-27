@@ -15,6 +15,17 @@ function validateEmail($email): array{
     return [0, 'Почта валидна'];
 }
 
+function validateChangingPassword($newPassword, $confirmPassword){
+    if($newPassword != $confirmPassword){
+        return [1, 'Ошибка: Пароли не совпадают'];
+    }
+    if($newPassword == ''){
+        return [1, 'Ошибка: Пароль не может быть пустой строкой'];
+    }
+
+    return [0, 'Изменение пароля возможно'];
+}
+
 // only use with $_FILES['imagename']
 function validateMedia($img, $to): array{
     if ($img['error'] > 0) {

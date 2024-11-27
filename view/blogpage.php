@@ -1,6 +1,13 @@
 <?php
     $getPostsQ = $pdo->query("SELECT * FROM posts WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
     $getStoriesQ = $pdo->query("SELECT * FROM stories WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
+
+    class Story{
+
+    }
+    class Post{
+        
+    }
         
     function echoStory($id, $name, $date, $src, $luser){
         $file = "static/user/$luser->name/stories/$src";

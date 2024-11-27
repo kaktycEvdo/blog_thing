@@ -5,6 +5,12 @@ class BlogPage extends Page{
         $url = $this->url;
         $luser_id = null;
 
+        if($url == '/about'){
+            if(!isset($_SESSION['user']) || $_SESSION['user'] == null){
+                $this->redirect('auth');
+            }
+        }
+
         if(isset($_GET['user']) && preg_match('/\d+/', $_GET['user'])){
             $luser_id = $_GET['user'];
 
@@ -45,7 +51,7 @@ class BlogPage extends Page{
             }
         }
         else{
-            header("Location: auth");
+            header("Location: $this->dir");
         }
     }
 }

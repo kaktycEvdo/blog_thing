@@ -4,6 +4,13 @@
  * Model – an abstract construct for working with object in PDO-connected tables.
  */
 class Model{
+
+    protected function changeField(PDO $pdo, $field, $content){
+        $modal = new ServerModal;
+        $q = $pdo->prepare("UPDATE users SET $field = :content WHERE id = $this->id");
+        $q->bindParam('content', $content);
+        return $q->execute();
+    }
 }
 /**
  * A user model.
@@ -128,10 +135,122 @@ class User extends Model{
         $_SESSION['left_user_id'] = $id;
         header('Location: profile');
     }
-    public function changeField(PDO $pdo, $field, $content){
+    public function update(PDO $pdo, string $name, array $passwords, string $brief, string $description,
+    string $pfp, string $background){
+        require 'checking_module.php';
+
         $modal = new ServerModal;
-        $qChangePassword = $pdo->prepare("UPDATE users SET $field = :password WHERE id = $this->user_id");
-        $qChangePassword->bindParam('password', $password);
-        if($qChangePassword->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+
+        if($passwords && $passwords[0] != ''){
+            $val = validateChangingPassword($passwords[0], $passwords[1]);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $password = hash('sha256', $_POST['newPassword']);
+            if (!$this->changeField($pdo, 'password', $password)) $modal->throwModal('Ошибка при изменениях', true, 'profile');
+        }
+
+        if(isset($_POST['description']) && $_POST['description'] != $this->description){
+            // update description
+            $description = $_POST['description'];
+            if (!$this->changeField($pdo, 'password', $password)) $modal->throwModal('Ошибка при изменениях', true, 'profile');
+        }
+        
+        if(isset($_POST['brief']) && $_POST['brief'] != $user_data['brief']){
+            // update brief
+            $brief = $_POST['brief'];
+            $qChangeBrief->bindParam('brief', $brief);
+            if($qChangeBrief->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+        }
+
+        if(isset($_POST['name']) && isset($_POST['email'])){
+            if($_POST['name'] != $user_data['name']){
+                // update username
+                $name = $_POST['name'];
+                $res = validateName($name);
+                if($res[0] == 1){
+                    $_SESSION['response'] = $res;
+                    header("Location: profile");
+                    die;
+                }
+                $qChangeName->bindParam('name', $name);
+                if($qChangeName->execute()) {
+                    if(rename('static/user/'.$user_data['name'].'/', 'static/user/'.$name.'/')) {
+                        $_SESSION['response'] = [0, 'Изменения успешны'];
+                    }
+                };
+            }
+            if($_POST['email'] != $user_data['email']){
+                // update email
+                $email = $_POST['email'];
+                $res = validateEmail($email);
+                if($res[0] == 1){
+                    $_SESSION['response'] = $res;
+                    header("Location: profile");
+                    die;
+                }
+                $qChangeEmail->bindParam('email', $email);
+                if($qChangeEmail->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+            }
+        }
+
+        if(isset($_FILES['profile_image']) && $_FILES['profile_image']['name'] != ''){
+            $img = $_FILES['profile_image'];
+            $to = '';
+
+            if(!isset($img) || $img == 'default'){
+                $to = 'static/user-default.png';
+            } else {
+                $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
+            }
+
+            if(!is_dir('static/user/'.$user_data['name'])){
+                mkdir('static/user/'.$user_data['name']);
+            }
+
+            $res = validateMedia($img, $to);
+
+            if($res[0] == 1){
+                $_SESSION['response'] = $res;
+                header('Location: profile');
+                die;
+            }
+            $name = $_POST['name'];
+            $res = validateName($name);
+            if($res[0] == 1){
+                $_SESSION['response'] = $res;
+                header("Location: profile");
+                die;
+            }
+            $to = str_replace('static/'.$user_data['name'].'/', '', $to);
+            $qChangePFP->bindParam('pfp', $to);
+            if($qChangePFP->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+        }
+        if(isset($_FILES['profile_bg']) && $_FILES['profile_bg']['name'] != ''){
+            $to = '';
+            $img = $_FILES['profile_bg'];
+
+            if(!isset($img) || $img == 'default'){
+                $to = 'static/bg-default.png';
+            } else {
+                $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
+            }
+
+            if(!is_dir('static/user/'.$user_data['name'])){
+                mkdir('static/user/'.$user_data['name']);
+            }
+
+            $res = validateMedia($img, $to);
+
+            if($res[0] == 1){
+                $_SESSION['response'] = $res;
+                header('Location: profile');
+                die;
+            }
+            $to = str_replace('static/'.$user_data['name'].'/', '', $to);
+            $qChangeBG->bindParam('bg', $to);
+            if($qChangeBG->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+            else $_SESSION['response'] = [1, 'Изменение не вышло'];
+        }
+
+        header("Location: profile");
     }
 }
