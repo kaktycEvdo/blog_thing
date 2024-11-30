@@ -45,13 +45,6 @@ class User extends Model{
         $this->description = $description;
         $this->brief = $brief;
         $this->pfp = $pfp;
-
-        // $qChangeName = $this->pdo->prepare("UPDATE users SET name = :name WHERE id = $this->user_id");
-        // $qChangeEmail = $this->pdo->prepare("UPDATE users SET email = :email WHERE id = $this->user_id");
-        // $qChangePFP = $this->pdo->prepare("UPDATE users SET pfp = :pfp WHERE id = $this->user_id");
-        // $qChangeBG = $this->pdo->prepare("UPDATE users SET background = :bg WHERE id = $this->user_id");
-        // $qChangeBrief = $this->pdo->prepare("UPDATE users SET brief = :brief WHERE id = $this->user_id");
-        // $qChangeDescription = $this->pdo->prepare("UPDATE users SET description = :desc WHERE id = $this->user_id");
     }
 
     public function initiateUser() {
@@ -148,10 +141,10 @@ class User extends Model{
         $stmt->bindParam('pfp', $this->pfp);
         $stmt->bindParam('background', $this->background);
         $res = $stmt->execute();
-
         
         if($res == false) $modal->throwModal('Ошибка обновления пользователя в сервере', true, 'profile');
-        else $modal->throwModal('Обновление пользователя успешно', false, '');
+        else $modal->throwModal('Обновление пользователя успешно', false);
+        header("Location: ../blog-project");
     }
     public function updatePFP($img){
         $modal = new ServerModal();
@@ -208,6 +201,7 @@ class User extends Model{
         if($name != $this->name){
             $val = validateName($name);
             if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            rename("static/user/$this->name", "static/user/$name");
             $this->name = $name;
         }
     }

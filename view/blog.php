@@ -76,6 +76,8 @@ class Comment{
         $stmt->bindParam('bid', $blog_id);
         $stmt->execute();
         $this->comment = $stmt->fetch();
+        $this->id = $id;
+        $this->blog_id = $blog_id;
 
         $this->text = $this->comment['text'];
         $this->publish_date = $this->comment['publish_date'];
@@ -86,40 +88,43 @@ class Comment{
         $stmt->execute();
         $this->author = $stmt->fetch(PDO::FETCH_OBJ);
 
-        $this->responses = $this->pdo->query('SELECT * FROM comment WHERE response = '.$this->comment['id'])->fetchAll();
+        $this->responses = $this->pdo->query("SELECT * FROM comment WHERE response = $this->id")->fetchAll();
     }
 
     /**
      * @return void Displays the comment in formatted manner.
      */
-    public function display(){
+    public function display($comment = $this){
         $time = $this->comment['publish_date'];
         $datetime1 = date_create($time);
         $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
         $interval = date_diff($datetime1, $datetime2);
         $display_time = formatDisplayTime($interval);
 
-        $pfp = $this->author->pfp != '' ? 'static/user/'.$this->author->name.'/'.$this->author->pfp : 'static/user-default.png';
+        $pfp = $comment->author->pfp != '' ? 'static/user/'.$comment->author->name.'/'.$comment->author->pfp : 'static/user-default.png';
 
-        echo '<div class="comment">
-        <div class="author_data">
-        <div class="author_pfp"><img src="'.$pfp.'"></div>
-        <div class="author_name">
-        <a href="blogpage?user='.$this->author->id.'">'.$this->author->name.'</a>
-        <p>'.$display_time.'</p>
+        echo "<div class='comment'>
+        <div class='author_data'>
+        <div class='author_pfp'><img src='static/user/".$comment->author->name."/".$comment->author->pfp."'></div>
+        <div class='author_name'>
+        <a href='blogpage?user=".$comment->author->id."'>".$comment->author->name."</a>
+        <p>$display_time</p>
         </div>
         </div>
-        <div class="comment_data">
-        <div class="comment_text">'.$this->comment['text'].'</div>
+        <div class='comment_data'>
+        <div class='comment_text'>".$comment->text."</div>
         </div>
-        <a class="accenttext respond" id="r'.$this->comment['id'].'">ответить</a>
-        <form id="f'.$this->comment['id'].'" class="respond_form hidden" action="comment?response='.$this->comment['id'].'&blog_id='.$this->blog_id.'" method="POST">
-        <input type="text" placeholder="Текст ответа" name="text">
+        <a class='accenttext respond' id='r$comment->id'>ответить</a>
+        <form id='f$comment->id' class='respond_form hidden' action='comment?response=$comment->id&blog_id=$comment->blog_id' method='POST'>
+        <input type='text' placeholder='Текст ответа' name='text'>
         <div>
-        <input type="submit" value="Ответить">
-        <button id="c'.$this->comment['id'].'" class="other-button respond_cancel">Отмена</button>
+        <input type='submit' value='Ответить'>
+        <button id='c$comment->id' class='other-button respond_cancel'>Отмена</button>
         </div>
-        </form>';
+        </form>";
+        if(sizeof($comment->responses) > 0){
+
+        }
     }
 }
 
@@ -136,7 +141,7 @@ $date = date('d.m.Y', strtotime($blog->last_change_date));
 $file = null;
 $file_type = null;
 if($blog->media != null){
-    $file = 'static/user/'.$author_data['name'].'/post_media/'.$blog->media;
+    $file = $blog->media;
     if(file_exists($file) &&
     preg_match('/image\//', mime_content_type($file))){
         $file_type = 'img';
@@ -201,7 +206,15 @@ if($blog->media != null){
     <hr>
     <?php
     if($blog->comment_ability == 1){
-        $getCommentsQ = $pdo->prepare('SELECT id FROM comment WHERE post = :id');
+        $getCommentsQ = $pdo->prepare("WITH RECURSIVE replies as (
+        SELECT id, response, text, 0 as level, array[id] as sort_path
+        FROM comment
+        WHERE response = null and blog_id = :id
+        UNION ALL
+        select c.id, c.reply_to, c.text, p.level + 1, p.sort_path||c.id
+        from comment c
+            join replies p on p.id = c.reply_to
+        ) WHERE blog_id = :id");
         $getCommentsQ->bindParam('id', $blog_id);
         $getCommentsQ->execute();
 

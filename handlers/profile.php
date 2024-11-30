@@ -46,6 +46,7 @@ class ProfilePage extends Page{
             }
             $user->saveChanges($pdo);
             $_SESSION['left_user'] = serialize($user);
+            $_SESSION['user'] = serialize($user);
         }
         else{
             include_once 'view/components/profile_form.php';

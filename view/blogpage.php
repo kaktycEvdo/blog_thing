@@ -98,7 +98,7 @@
                     }
                 ?>
                     <div class="inner">
-                        <a href="blog?id='.$post['id'].'" class="content">
+                        <a href="blog?id=<?php echo $post['id'] ?>" class="content">
                         <h3><?php echo $post['header']; ?></h3>
                         <?php echo $post['content']; ?>
                         </a>
