@@ -15,7 +15,7 @@ class Model{
 /**
  * A user model.
  * @property string $email Email. Under 100 characters.
- * @property string $password Password. Hashes.
+ * @property string $password Password. Keep empty if not needed.
  * @property string $name Username. Under 150 characters.
  */
 class User extends Model{
@@ -113,7 +113,7 @@ class User extends Model{
             die;
         }
 
-        $modal->throwModal('Авторизация прошла успешно', false, 'index');
+        $modal->throwModal('Авторизация прошла успешно', false, '');
     }
     public function register(PDO $pdo){
         // do the thing
@@ -135,122 +135,102 @@ class User extends Model{
         $_SESSION['left_user_id'] = $id;
         header('Location: profile');
     }
-    public function update(PDO $pdo, string $name, array $passwords, string $brief, string $description,
-    string $pfp, string $background){
-        require 'checking_module.php';
 
-        $modal = new ServerModal;
-
-        if($passwords && $passwords[0] != ''){
-            $val = validateChangingPassword($passwords[0], $passwords[1]);
-            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
-            $password = hash('sha256', $_POST['newPassword']);
-            if (!$this->changeField($pdo, 'password', $password)) $modal->throwModal('Ошибка при изменениях', true, 'profile');
-        }
-
-        if(isset($_POST['description']) && $_POST['description'] != $this->description){
-            // update description
-            $description = $_POST['description'];
-            if (!$this->changeField($pdo, 'password', $password)) $modal->throwModal('Ошибка при изменениях', true, 'profile');
-        }
+    public function saveChanges(PDO $pdo){
+        $modal = new ServerModal();
         
-        if(isset($_POST['brief']) && $_POST['brief'] != $user_data['brief']){
-            // update brief
-            $brief = $_POST['brief'];
-            $qChangeBrief->bindParam('brief', $brief);
-            if($qChangeBrief->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
-        }
+        $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, password = :password, description = :description, brief = :brief, pfp = :pfp, background = :background WHERE id=$this->id");
+        $stmt->bindParam('name', $this->name);
+        $stmt->bindParam('email', $this->email);
+        $stmt->bindParam('password', $this->password);
+        $stmt->bindParam('description', $this->description);
+        $stmt->bindParam('brief', $this->brief);
+        $stmt->bindParam('pfp', $this->pfp);
+        $stmt->bindParam('background', $this->background);
+        $res = $stmt->execute();
 
-        if(isset($_POST['name']) && isset($_POST['email'])){
-            if($_POST['name'] != $user_data['name']){
-                // update username
-                $name = $_POST['name'];
-                $res = validateName($name);
-                if($res[0] == 1){
-                    $_SESSION['response'] = $res;
-                    header("Location: profile");
-                    die;
-                }
-                $qChangeName->bindParam('name', $name);
-                if($qChangeName->execute()) {
-                    if(rename('static/user/'.$user_data['name'].'/', 'static/user/'.$name.'/')) {
-                        $_SESSION['response'] = [0, 'Изменения успешны'];
-                    }
-                };
-            }
-            if($_POST['email'] != $user_data['email']){
-                // update email
-                $email = $_POST['email'];
-                $res = validateEmail($email);
-                if($res[0] == 1){
-                    $_SESSION['response'] = $res;
-                    header("Location: profile");
-                    die;
-                }
-                $qChangeEmail->bindParam('email', $email);
-                if($qChangeEmail->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
-            }
-        }
+        
+        if($res == false) $modal->throwModal('Ошибка обновления пользователя в сервере', true, 'profile');
+        else $modal->throwModal('Обновление пользователя успешно', false, '');
+    }
+    public function updatePFP($img){
+        $modal = new ServerModal();
 
-        if(isset($_FILES['profile_image']) && $_FILES['profile_image']['name'] != ''){
-            $img = $_FILES['profile_image'];
+        if($img['name'] != ''){
             $to = '';
 
-            if(!isset($img) || $img == 'default'){
+            if($img == 'default' || $img['name'] == 'user-default.png'){
                 $to = 'static/user-default.png';
             } else {
-                $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
+                $to = "static/user/$this->name/".$img['name'];
             }
 
-            if(!is_dir('static/user/'.$user_data['name'])){
-                mkdir('static/user/'.$user_data['name']);
+            if(!is_dir("static/user/$this->name")){
+                mkdir("static/user/$this->name");
             }
 
-            $res = validateMedia($img, $to);
-
-            if($res[0] == 1){
-                $_SESSION['response'] = $res;
-                header('Location: profile');
-                die;
-            }
-            $name = $_POST['name'];
-            $res = validateName($name);
-            if($res[0] == 1){
-                $_SESSION['response'] = $res;
-                header("Location: profile");
-                die;
-            }
-            $to = str_replace('static/'.$user_data['name'].'/', '', $to);
-            $qChangePFP->bindParam('pfp', $to);
-            if($qChangePFP->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
+            $val = validateMedia($img, $to);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $this->pfp = $img['name'];
         }
-        if(isset($_FILES['profile_bg']) && $_FILES['profile_bg']['name'] != ''){
-            $to = '';
-            $img = $_FILES['profile_bg'];
+    }
 
-            if(!isset($img) || $img == 'default'){
-                $to = 'static/bg-default.png';
-            } else {
-                $to = 'static/user/'.$user_data['name'].'/'.$img['name'];
+    public function updateBackground($img){
+        $modal = new ServerModal();
+
+        if($img['name'] != ''){
+            $to = "static/user/$this->name/".$img['name'];
+
+            if(!is_dir("static/user/$this->name")){
+                mkdir("static/user/$this->name");
             }
 
-            if(!is_dir('static/user/'.$user_data['name'])){
-                mkdir('static/user/'.$user_data['name']);
-            }
-
-            $res = validateMedia($img, $to);
-
-            if($res[0] == 1){
-                $_SESSION['response'] = $res;
-                header('Location: profile');
-                die;
-            }
-            $to = str_replace('static/'.$user_data['name'].'/', '', $to);
-            $qChangeBG->bindParam('bg', $to);
-            if($qChangeBG->execute()) $_SESSION['response'] = [0, 'Изменения успешны'];
-            else $_SESSION['response'] = [1, 'Изменение не вышло'];
+            $val = validateMedia($img, $to);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $this->background = $img['name'];
         }
+    }
 
-        header("Location: profile");
+    public function updatePassword(string $newPassword, string $repeatPassword){
+        $modal = new ServerModal();
+
+        $hashed_pswrd = hash('sha256', $newPassword);
+        if($newPassword != null && $repeatPassword != null && $hashed_pswrd != $this->password){
+            $val = validateChangingPassword($newPassword, $repeatPassword);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $this->password = hash('sha256', $newPassword);
+        }
+    }
+
+    public function updateName(string $name){
+        $modal = new ServerModal();
+
+        if($name != $this->name){
+            $val = validateName($name);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $this->name = $name;
+        }
+    }
+
+    public function updateEmail(string $email){
+        $modal = new ServerModal();
+
+        if($email != $this->email){
+            $val = validateEmail($email);
+            if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
+            $this->email = $email;
+        }
+    }
+
+    public function updateDescription(string $description){
+        if($description != $this->description){
+            $this->description = $description;
+        }
+    }
+
+    public function updateBrief(string $brief){
+        if($brief != $this->brief){
+            $this->brief = $brief;
+        }
     }
 }

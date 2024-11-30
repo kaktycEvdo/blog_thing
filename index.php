@@ -147,7 +147,9 @@
 <body>
 <script src="static/main.js"></script>
 <?php
-    $cur_page->display();
+    if(isset($cur_page)){
+        $cur_page->display();
+    }
 ?>
 </body>
 </html>
