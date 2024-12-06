@@ -1,0 +1,103 @@
+<div class="form_page">
+    <form method="POST" enctype="multipart/form-data">
+        <div id="fr1">
+            <h2>Регистрация</h2>
+            <div>
+                <input required type="text" name="name" pattern="[^!@#$%^&*\[\]\{\}]+" placeholder="Имя профиля">
+                <input required type="email" name="email" pattern="[a-z0-9._-]+@[a-z]{3,}\.[a-z]{2,3}" placeholder="Электронная почта">
+                <input required type="password" name="password" placeholder="Пароль">
+                <button id="ns1">
+                    Далее
+                </button>
+            </div>
+        </div>
+        <div id="fr2" class="image-select">
+            <h2>Выбор изображения профиля</h2>
+            <div>
+                <input accept="image/*" value="default" name="pfp" type="file" limit="20000" id="profile_image">
+                <label for="profile_image">
+                    Изменить
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAABA0lEQVR4nO3ZMQ7CMAyF4XccBphggrJT7n8COqByicdSIRQBTZo6tpF/yRtDvhihVgBRFJV2BTAAoNEZAPQ5EMsITnPLgdDJzKZ9QAYkae2bO6KuzspX61QJgRVI6TwA7LxDRgDb6Rxbr5D3TWwA3D1CPiHoDfINQU+QXwh6gcwh6AGSg6B1SC6CliElCFqFlCJoEbIEQWuQpQhagtQgaAWSPgCOC18BzpqQ2k2wYFtikBYISkNaISgJaYmgFKQ1ghIQDQQlIPvKn1gzkA7AoTGCEhCtmU37gAxIkvZNMzaSpH3TjI0kad80YyNJf7ORwcAhucbf0/30QcuISw4kiiK8egKYlVxgnFQcXAAAAABJRU5ErkJggg==">
+                </label>
+                <button class="other-button">
+                    Сбросить
+                </button>
+            </div>
+            <div>
+                Превью: <img id="output" src="static/user-default.png" alt="profile picture">
+            </div>
+            <div class="form_buttons">
+                <button id="bs2" class="other-button">
+                    Назад
+                </button>
+                <input type="submit" value="Зарегистрироваться">
+            </div>
+        </div>
+    </form>
+    <div>
+        <a href="auth">Авторизация</a>
+    </div>
+</div>
+<script>
+    document.querySelector('.image-select input').addEventListener('change', (e) => {
+        let output = document.getElementById("output");
+        output.src = URL.createObjectURL(e.target.files[0]);
+        output.onload = function() {
+            URL.revokeObjectURL(output.src); // free memory
+        }
+    });
+    document.querySelector('.image-select button').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector('.image-select input').files[0] = null;
+        let output = document.getElementById("output");
+        output.src = 'static/user-default.png';
+        output.onload = function() {
+            URL.revokeObjectURL(output.src);
+        }
+    });
+    // forms, button for next step and button for back step
+    let fr1 = document.getElementById('fr1');
+    let fr2 = document.getElementById('fr2');
+    fr2.classList.add('hidden');
+    let ns1 = document.getElementById('ns1');
+    let bs1 = document.getElementById('bs2');
+    function stepNext(){
+        fr1.classList.add('hidden');
+        fr2.classList.remove('hidden');
+    }
+    function stepBack(){
+        fr1.classList.remove('hidden');
+        fr2.classList.add('hidden');
+    }
+    
+    ns1.addEventListener('click', (e) => {
+        e.preventDefault();
+        let name = document.querySelector('input[name="name"]');
+        let email = document.querySelector('input[name="email"]');
+        let password = document.querySelector('input[name="password"]');
+        let errors = 0;
+
+        // TODO: make some invalid messages
+        let makeInvalid = function(field){field.classList.add('invalid_field')}
+
+        if(!name.value.trim().match(/[a-zA-Z]+\w+/)){
+            makeInvalid(name);
+            errors++;
+        }
+        if(!email.value.trim().match(/[a-z0-9]+\@[a-z]{3,}\.[a-z]{2,3}/)){
+            makeInvalid(email);
+            errors++;
+        }
+        if(!password.value.trim().match(/[a-zA-Z]+\w+/)){
+            makeInvalid(password);
+            errors++;
+        }
+        if(errors === 0){
+            stepNext();
+        }
+    });
+    bs1.addEventListener('click', (e) => {
+        e.preventDefault();
+        stepBack();
+    });
+</script>
