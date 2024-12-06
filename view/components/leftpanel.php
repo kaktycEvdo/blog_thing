@@ -29,7 +29,7 @@
                 <hr>
                 <div class="profile_left_buttons">
                     <a href="works?user=<?php echo $luser->id; ?>" class="generic-button other-button">Мои работы</a>
-                    <a href="#" class="generic-button" id="contact_button">Написать мне</a>
+                    <a class="generic-button" id="contact_button">Написать мне</a>
                 </div>
             </div>
             <div id="contact" class="modal">

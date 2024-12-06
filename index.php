@@ -115,7 +115,8 @@
         '/create_post',
         '/pin_post',
         '/comment',
-        '/works'
+        '/works',
+        '/advertisement'
     ];
 
     if(array_search($url, $pages_names, true) !== false){

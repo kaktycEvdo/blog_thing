@@ -60,7 +60,6 @@ class Blog{
  * @property int $blog_id ID of blog that has the comments.
  */
 class Comment{
-    private $responses;
     private $blog_id;
     private $id;
     public $text;
@@ -87,44 +86,58 @@ class Comment{
         $stmt->bindParam('id', $this->comment['author']);
         $stmt->execute();
         $this->author = $stmt->fetch(PDO::FETCH_OBJ);
+    }
 
-        $this->responses = $this->pdo->query("SELECT * FROM comment WHERE response = $this->id")->fetchAll();
+    private function printoutResponses($comment_id){
+        $responses = $this->pdo->query("SELECT * FROM comment WHERE response = $comment_id")->fetchAll();
+        if(sizeof($responses) > 0){
+            echo "<div class='response_comment'>";
+            foreach ($responses as $response_data) {
+                $response = new Comment($response_data['id'], $this->blog_id, $this->pdo);
+                $response->display();
+            }
+            echo "</div>";
+        }
     }
 
     /**
      * @return void Displays the comment in formatted manner.
      */
-    public function display($comment = $this){
+    public function display(){
         $time = $this->comment['publish_date'];
         $datetime1 = date_create($time);
         $datetime2 = date_create('now',new DateTimeZone('Asia/Novosibirsk'));
         $interval = date_diff($datetime1, $datetime2);
         $display_time = formatDisplayTime($interval);
 
-        $pfp = $comment->author->pfp != '' ? 'static/user/'.$comment->author->name.'/'.$comment->author->pfp : 'static/user-default.png';
+        $pfp = $this->author->pfp != '' ? 'static/user/'.$this->author->name.'/'.$this->author->pfp : 'static/user-default.png';
 
-        echo "<div class='comment'>
-        <div class='author_data'>
-        <div class='author_pfp'><img src='static/user/".$comment->author->name."/".$comment->author->pfp."'></div>
+        echo "<div class='comment'>";
+        echo "<div class='author_data'><div class='author_pfp'>";
+        if($this->author->pfp != 'user-default.png' && $this->author->pfp != null){
+            echo "<img src='static/user/".$this->author->name."/".$this->author->pfp."'>";
+        }
+        else{
+            echo "<img src='static/user-default.png'>";
+        }
+        echo "</div>
         <div class='author_name'>
-        <a href='blogpage?user=".$comment->author->id."'>".$comment->author->name."</a>
+        <a href='blogpage?user=".$this->author->id."'>".$this->author->name."</a>
         <p>$display_time</p>
         </div>
         </div>
         <div class='comment_data'>
-        <div class='comment_text'>".$comment->text."</div>
+        <div class='comment_text'>$this->text</div>
         </div>
-        <a class='accenttext respond' id='r$comment->id'>ответить</a>
-        <form id='f$comment->id' class='respond_form hidden' action='comment?response=$comment->id&blog_id=$comment->blog_id' method='POST'>
+        <a class='accenttext respond' id='r$this->id'>ответить</a>
+        <form id='f$this->id' class='respond_form hidden' action='comment?response=$this->id&blog_id=$this->blog_id' method='POST'>
         <input type='text' placeholder='Текст ответа' name='text'>
         <div>
         <input type='submit' value='Ответить'>
-        <button id='c$comment->id' class='other-button respond_cancel'>Отмена</button>
+        <button id='c$this->id' class='other-button respond_cancel'>Отмена</button>
         </div>
-        </form>";
-        if(sizeof($comment->responses) > 0){
-
-        }
+        </form></div>";
+        $this->printoutResponses($this->id);
     }
 }
 
@@ -206,15 +219,7 @@ if($blog->media != null){
     <hr>
     <?php
     if($blog->comment_ability == 1){
-        $getCommentsQ = $pdo->prepare("WITH RECURSIVE replies as (
-        SELECT id, response, text, 0 as level, array[id] as sort_path
-        FROM comment
-        WHERE response = null and blog_id = :id
-        UNION ALL
-        select c.id, c.reply_to, c.text, p.level + 1, p.sort_path||c.id
-        from comment c
-            join replies p on p.id = c.reply_to
-        ) WHERE blog_id = :id");
+        $getCommentsQ = $pdo->prepare("SELECT * FROM comment WHERE post = :id AND response is null ORDER BY publish_date DESC");
         $getCommentsQ->bindParam('id', $blog_id);
         $getCommentsQ->execute();
 
@@ -227,8 +232,6 @@ if($blog->media != null){
         else{
             foreach($comments as $comment_data){
                 $comment = new Comment($comment_data['id'], $blog_id, $pdo);
-
-                // comment => comment => comment
 
                 $comment->display();
             }

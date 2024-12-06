@@ -1,6 +1,6 @@
 <?php
 echo '<div>';
-$file = "static/user/$luser->name/stories/".$content['media'];
+$file = "static/user/".$this->author->name."/stories/".$this->media;
 if(preg_match('/image\//', mime_content_type($file))){
     echo "<img src='$file' />";
 }

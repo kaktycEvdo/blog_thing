@@ -63,8 +63,8 @@ class User extends Model{
     }
     
     public function authorize(PDO $pdo) {
-        $query = $pdo->prepare('SELECT id, name, email, description, brief, pfp, background FROM users WHERE name = :name and password = :password');
-        $queryE = $pdo->prepare('SELECT id, name, email, description, brief, pfp, background FROM users WHERE email = :name and password = :password');
+        $query = $pdo->prepare('SELECT id, name, email, password, description, brief, pfp, background FROM users WHERE name = :name and password = :password');
+        $queryE = $pdo->prepare('SELECT id, name, email, password, description, brief, pfp, background FROM users WHERE email = :name and password = :password');
         $data = null;
 
         if (str_contains($this->name, '@')){
@@ -183,12 +183,12 @@ class User extends Model{
             $this->background = $img['name'];
         }
     }
-
+    // TODO: fix empty string password??
     public function updatePassword(string $newPassword, string $repeatPassword){
         $modal = new ServerModal();
 
         $hashed_pswrd = hash('sha256', $newPassword);
-        if($newPassword != null && $repeatPassword != null && $hashed_pswrd != $this->password){
+        if($newPassword != '' && $repeatPassword != '' && $hashed_pswrd != $this->password){
             $val = validateChangingPassword($newPassword, $repeatPassword);
             if($val[0] == 1) $modal->throwModal($val[1], true, 'profile');
             $this->password = hash('sha256', $newPassword);

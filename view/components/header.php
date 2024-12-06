@@ -12,8 +12,9 @@
                 Статьи
                 <div id="custom_pages">
                     <?php
-                    if(isset($_SESSION['user_id'])){
-                        $stmt = $this->pdo->query('SELECT id, header FROM posts WHERE pinned = 1 and author = '.$_SESSION['user_id']);
+                    if(isset($_SESSION['user'])){
+                        $user = unserialize($_SESSION['user']);
+                        $stmt = $this->pdo->query("SELECT id, header FROM posts WHERE pinned = 1 and author = $user->id");
                         $pins = $stmt->fetchAll();
                         if($pins){
                             foreach ($pins as $pin) {

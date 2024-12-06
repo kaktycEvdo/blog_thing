@@ -503,6 +503,7 @@ h3{
 
 .response_comment{
     padding-left: 30px;
+    margin: 5px 0;
 }
 
 .respond_form{
@@ -631,6 +632,7 @@ nav.bignav #dropdown:checked + label {
     border-radius: 50px;
     font-size: smaller;
     padding: 12px 20px;
+    cursor: pointer;
 }
 #left-panel .profile_media{
     display: grid;
@@ -971,6 +973,9 @@ img#output{
 }
 .accenttext{
     color: var(--accent_color);
+}
+.clickable{
+    cursor: pointer;
 }
 /* do interface later i guess */
 /* .vinterface_short{
