@@ -28,7 +28,7 @@ class BlogPage extends Page{
                 $stmt->execute();
     
                 $luser_data = $stmt->fetch();
-    
+                
                 $luser = new User(
                     $luser_data['name'],
                     $luser_data['email'],

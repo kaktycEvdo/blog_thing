@@ -37,7 +37,7 @@
             include_once 'view/components/leftpanel.php';
             echo '</main>';
         }
-        protected function redirect($location){
+        public static function redirect($location){
             header("Location: $location");
         }
     }

@@ -268,31 +268,35 @@ main > section:first-child{
     border-radius: 5px;
     box-shadow: 0 0 10px 1px var(--bg_darker_color);
 }
-#blogs .posts > div > a:first-child{
+#blogs .posts > div > .pin:first-child{
     position: absolute;
     display: flex;
     align-self: end;
     margin: 10px;
     border-radius: 100%;
     background-color: var(--bg_darker_color);
+    box-shadow: 0 0 5px var(--bg_darker_color);
     padding: 5px;
     width: 20px;
     height: 20px;
 }
-#blogs .posts > div > a:first-child:hover{
+#blogs .posts > div > .pin:hover{
     background-color: var(--accent_color);
+    box-shadow: 0 0 5px var(--accent_color);
 }
-#blogs .posts > div > a:first-child.pinned{
+#blogs .posts > div > .pin.pinned{
     background-color: var(--accent_color);
+    box-shadow: 0 0 5px var(--accent_color);
 }
-#blogs .posts > div > a:first-child.pinned:hover{
+#blogs .posts > div > .pin.pinned:hover{
     background-color: var(--other_color);
+    box-shadow: 0 0 5px var(--other_color);
 }
-#blogs .posts > div > a:first-child svg{
+#blogs .posts > div > .pin svg{
     width: 20px;
     height: 20px;
 }
-#blogs .posts > div > a:first-child path{
+#blogs .posts > div > .pin path{
     fill: var(--font_color);
 }
 #blogs .posts .inner{
