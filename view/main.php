@@ -17,5 +17,12 @@
             </a>
         <?php
     }
+    if(sizeof($users) == 0){
+        ?>
+            <div>
+                Нет пользователей :(
+            </div>
+        <?php
+    }
 ?>
 </section>

@@ -53,4 +53,4 @@ class ProfilePage extends Page{
         }
     }
 }
-$cur_page = new ProfilePage($pdo, $dir);
+$cur_page = new ProfilePage($pdo);

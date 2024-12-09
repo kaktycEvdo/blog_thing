@@ -118,14 +118,12 @@ class User extends Model{
         $query->bindValue('pfp', $this->pfp);
 
         if(!$query->execute()){
-            echo 'Ошибка создания пользователя';
+            ServerModal::staticThrowModal('Ошибка создания пользователя', true, 'reg');
             die;
         }
 
-        $id = $pdo->query('SELECT id FROM users ORDER BY id DESC LIMIT 1')->fetch(PDO::FETCH_COLUMN);
-
-        $_SESSION['user_id'] = $id;
-        $_SESSION['left_user_id'] = $id;
+        $_SESSION['user'] = serialize($this);
+        $_SESSION['left_user'] = serialize($this);
         header('Location: profile');
     }
 

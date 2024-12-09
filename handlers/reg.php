@@ -6,7 +6,7 @@ class RegPage extends Page{
         require_once 'view/components/reg_form.html';
     }
 }
-$cur_page = new RegPage($pdo, $dir);
+$cur_page = new RegPage($pdo);
 
 if(isset($_POST['name'])){
     require_once 'checking_module.php';
@@ -18,6 +18,10 @@ if(isset($_POST['name'])){
         $modal->throwModal('Ошибка: пустые поля при регистрации', true, 'reg');
         die;
     }
+
+    $name = $_POST['name'];
+    $password = $_POST['password'];
+    $email = $_POST['email'];
 
     $res = validateName($name);
     if($res[0] == 1){
@@ -46,12 +50,14 @@ if(isset($_POST['name'])){
         $imgVal = validateMedia($pfp, $to);
 
         if($imgVal[0] == 1){
+            echo $imgVal[1].'<br>';
+            echo $imgVal[0];
             $modal->throwModal($imgVal[1], $imgVal[0], 'reg');
             die;
         }
     }
 
     // do the thing
-    $user = new User($name, $name, $password, $pdo, $pfp['name']);
+    $user = new User($name, $email, $password, $pdo, $pfp['name']);
     $user->register($pdo);
 }

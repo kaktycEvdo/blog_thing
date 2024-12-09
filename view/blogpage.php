@@ -142,14 +142,14 @@
             <?php }
     }
 
-    $getPostsQ = $pdo->query("SELECT id, content, header, media, tags, comment_ability, last_change_date, pinned FROM posts WHERE author = $luser->id ORDER BY id DESC LIMIT $limit OFFSET $temp", PDO::FETCH_ASSOC);
+    $getPostsQ = $pdo->query("SELECT id, content, header, cover, tags, comment_ability, last_change_date, pinned FROM posts WHERE author = $luser->id ORDER BY id DESC LIMIT $limit OFFSET $temp", PDO::FETCH_ASSOC);
     $getPostsAmount = $pdo->query("SELECT count(id) as amount FROM posts WHERE author = $luser->id GROUP BY author");
     $postAmount = $getPostsAmount->fetch();
     if($postAmount != null){
         $postAmount = $postAmount[0];
     }
 
-    $getStoriesQ = $pdo->query("SELECT id, name, media, comment_ability, publish_date FROM stories WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
+    $getStoriesQ = $pdo->query("SELECT id, header, media, publish_date FROM stories WHERE author = $luser->id ORDER BY id DESC", PDO::FETCH_ASSOC);
     $getStoriesAmount = $pdo->query("SELECT count(id) as amount FROM stories WHERE author = $luser->id GROUP BY author");
     $storyAmount = $getStoriesAmount->fetch();
     if($storyAmount != null){
@@ -201,20 +201,13 @@
             </svg>
         </button>
     </section>
-    <?php
-    }
-    if(sizeof($stories) == 0 && sizeof($posts) == 0){
-        echo "<h2>Нет постов у пользователя</h2>";
-    }
-    else{
-    ?>
     <div id="new_post" class="modal">
         <div class="modal_content">
             <div class="interface">
                 <div></div>
                 <button class="modal_close">×</button>
             </div>
-            <?php include_once 'view/modal/new_post.php'; ?>
+            <?php require_once 'view/modal/new_post.php'; ?>
         </div>
     </div>
     <div id="post_content" class="modal">
@@ -236,6 +229,11 @@
         </div>
     </div>
     <?php
+    }
+    if(sizeof($stories) == 0 && sizeof($posts) == 0){
+        echo "<h2>Нет постов у пользователя</h2>";
+    }
+    else{
         foreach ($stories as $story) {
             $story->modalPrintout();
         }

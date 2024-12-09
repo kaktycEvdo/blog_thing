@@ -19,7 +19,7 @@
         protected $pdo;
         protected $dir;
 
-        public function __construct(PDO $pdo) {
+        public function __construct($pdo) {
             $this->pdo = $pdo;
             $this->dir = $_SESSION['dir'];
             $this->url = $_SESSION['url'];
@@ -32,7 +32,13 @@
             echo '<main>';
             echo '<section>';
             $this->displayHeader();
-            $this->displayContent();
+            if($this->pdo == null){
+                include_once 'view/500.html';
+                die;
+            }
+            else{
+                $this->displayContent();
+            }
             echo '</section>';
             include_once 'view/components/leftpanel.php';
             echo '</main>';
@@ -75,6 +81,19 @@
             $this->thrown = true;
             $modal = $this;
             $_SESSION['response'] = serialize($modal);
+            if($location){
+                header("Location: $location");
+            }
+        }
+        public static function staticThrowModal(string $message, bool $error, string $location = null){
+            switch($error){
+                case false:
+                    echo "<div class='modal msuccess'>$message</div>";
+                    break;
+                case true:
+                    echo "<div class='modal merror'>$message</div>";
+                    break;
+            }
             if($location){
                 header("Location: $location");
             }

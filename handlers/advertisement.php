@@ -6,4 +6,4 @@ class AdPage extends Page{
         require_once 'view/advertisement.php';
     }
 }
-$cur_page = new AdPage($pdo, $dir);
+$cur_page = new AdPage($pdo);

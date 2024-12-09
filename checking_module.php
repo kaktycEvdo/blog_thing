@@ -46,8 +46,8 @@ function validateMedia($img, $to): array{
         }
         return [1, $str];
     }
-    
-    if (preg_match('/image\//', $img['type']) || preg_match('/video\//', $img['type'])){
+
+    if (!preg_match('/image\//', $img['type']) && !preg_match('/video\//', $img['type'])){
         return [1, 'Ошибка: Файл не является медиа-контентом'];
     }
 

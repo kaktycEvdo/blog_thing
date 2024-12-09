@@ -5,4 +5,4 @@ class MainPage extends Page{
         require_once 'view/main.php';
     }
 }
-$cur_page = new MainPage($pdo, $dir);
+$cur_page = new MainPage($pdo);

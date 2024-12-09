@@ -6,7 +6,7 @@ class AuthPage extends Page{
         require_once 'view/components/auth_form.html';
     }
 }
-$cur_page = new AuthPage($pdo, $dir);
+$cur_page = new AuthPage($pdo);
 
 if(isset($_POST['name'])){
     // check the data
